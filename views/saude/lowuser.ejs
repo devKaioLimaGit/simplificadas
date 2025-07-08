@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- ICON -->
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+    <title>Admin Dashboard</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="/utils/script.js" defer></script>
+
+    <!-- <script src="/utils/script.js" defer></script> -->
+
+    <!-- DataTables CSS -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css">
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
+    <!-- Incluindo a biblioteca xlsx.js -->
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables JS -->
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
+</head>
+
+<style>
+    ::-webkit-scrollbar {
+        width: 12px;
+    }
+
+    ::-webkit-scrollbar-thumb {
+        background-color: #007bff;
+        border-radius: 20px;
+    }
+
+    ::-webkit-scrollbar-track {
+        background: #fff;
+    }
+
+    /* Estilos gerais */
+    body {
+        font-family: Arial, sans-serif;
+        background-color: #f4f4f4;
+        margin: 0;
+        padding: 0;
+    }
+
+
+    .logout,
+    .download {
+        padding: 10px 50px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        text-decoration: none;
+    }
+
+    h1 {
+        text-align: center;
+        margin-bottom: 20px;
+        font-size: 24px;
+    }
+
+
+    /* Estilos da tabela */
+    table {
+        width: 100%;
+        border-collapse: collapse;
+        margin-top: 20px;
+    }
+
+    .container {
+        padding: 20px;
+    }
+
+    table,
+    th,
+    td {
+        border: 1px solid #ddd;
+        text-align: center;
+    }
+
+    th,
+    td {
+        padding: 0 20px;
+        font-size: 14px;
+    }
+
+    th {
+        background-color: #007bff;
+        color: white;
+    }
+
+    td {
+        background-color: #f9f9f9;
+    }
+
+    /* Efeitos de hover na tabela */
+    tr:hover {
+        background-color: #f1f1f1;
+    }
+
+    tbody tr:nth-child(even) {
+        background-color: #f2f2f2;
+    }
+
+    /* Estilo do botão de exportação */
+    #exportButton {
+        display: block;
+        margin: 20px auto;
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    #exportButton:hover {
+        background-color: #0056b3;
+    }
+
+    /* Estilo do cabeçalho */
+    header {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        padding: 10px;
+        height: 80px;
+        background-color: #0056b3;
+        color: #f1f1f1;
+    }
+
+    /* Media Queries para Responsividade */
+    @media (max-width: 768px) {
+        h1 {
+            font-size: 20px;
+        }
+
+        .logout,
+        .download {
+            padding: 8px 30px;
+        }
+
+        table,
+        th,
+        td {
+            font-size: 12px;
+        }
+
+        th,
+        td {
+            padding: 8px;
+        }
+    }
+
+    @media (max-width: 480px) {
+        header {
+            flex-direction: column;
+            align-items: flex-start;
+            height: auto;
+            padding: 20px;
+        }
+
+        .logout,
+        .download {
+            padding: 8px 20px;
+            width: 100%;
+            text-align: center;
+        }
+
+        table {
+            font-size: 12px;
+            overflow-x: auto;
+            display: block;
+        }
+
+        td,
+        th {
+            padding: 10px;
+        }
+    }
+
+    /* Modal para visualização do PDF */
+    #pdfModal {
+        display: none;
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: rgba(0, 0, 0, 0.7);
+        justify-content: center;
+        align-items: center;
+    }
+
+    .modal-content {
+        background: #fff;
+        border-radius: 20px;
+        padding: 20px;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .modal-buttons {
+        display: flex;
+        justify-content: space-around;
+        margin: 20px 0px;
+    }
+
+    #tab1 {
+        padding: 10px;
+        min-width: 500px;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 20px;
+        border-radius: 10px;
+        background-color: green;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    #tab2 {
+        padding: 10px;
+        min-width: 500px;
+        font-size: 16px;
+        font-weight: bold;
+        margin: 0 20px;
+        border-radius: 10px;
+        background-color: orange;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .modal-buttons button {
+        padding: 10px;
+        min-width: 500px;
+        margin: 0 20px;
+        border-radius: 10px;
+        background-color: #007bff;
+        color: white;
+        border: none;
+        cursor: pointer;
+    }
+
+    .modal-buttons button:hover {
+        background-color: #0056b3;
+    }
+
+    .tab-content {
+        flex-grow: 1;
+        overflow-y: auto;
+        display: none;
+    }
+
+    .tab-content.active {
+        display: block;
+    }
+
+    /* Estilizando o formulário */
+    .form-analyze {
+        background-color: #fff;
+        margin: 0 auto;
+        border-radius: 8px;
+        box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+        padding: 20px;
+        width: 80%;
+        display: flex;
+        flex-direction: column;
+        gap: 15px;
+    }
+
+    /* Estilizando o input de texto */
+    .input-field {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        background-color: #ecf8ff;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .input-field:focus {
+        border-color: #1e7ac9;
+        background-color: #e1f3ff;
+    }
+
+    /* Estilizando o botão "Aprovado" */
+    .btn-approve {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: #3498db;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-aprovado {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: green;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+
+    .btn-reprovado {
+        padding: 10px 20px;
+        font-size: 16px;
+        background-color: red;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+    }
+
+    .btn-nullAvaliab {
+        padding: 10px 20px;
+        font-size: 16px;
+        color: white;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.3s;
+        background-color: rgb(255, 174, 0);
+    }
+
+    .btn-approve:hover {
+        background-color: #1e7ac9;
+    }
+
+    .btn-approve:active {
+        background-color: #155a8a;
+    }
+
+    /* Estilizando a área de texto */
+    .textarea-field {
+        padding: 10px;
+        font-size: 16px;
+        border: 1px solid #3498db;
+        border-radius: 5px;
+        background-color: #ecf8ff;
+        resize: vertical;
+        min-height: 80px;
+        outline: none;
+        transition: border-color 0.3s;
+    }
+
+    .textarea-field:focus {
+        border-color: #1e7ac9;
+        background-color: #e1f3ff;
+    }
+</style>
+
+<body>
+    <header>
+        <h1>Lista de Candidatos - Canditatos Avaliados: <%=cotagem.length%>
+        </h1>
+        <div style="display: flex; align-items: center; gap: 20px;">
+            <a href="/filter" class="download" target="_blank">Filtros</a>
+            <a href="/logout" class="logout">Sair</a>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="table-container">
+            <table id="candidatesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>N° Inscrição</th>
+                        <th>Função</th>
+                        <th>Nome</th>
+                        <th>Idade</th>
+                        <th>E-Mail</th>
+                        <th>CPF</th>
+                        <th>Telefone</th>
+                        <th>Cidade</th>
+                        <th>Deficiência</th>
+                        <th>Anexo</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% candidates.forEach(candidate=> { %>
+                        <tr>
+                            <% if (candidate.isValid==1) { %>
+                                <td style="background-color: green;">
+                                    <% } else if (candidate.isValid==0) { %>
+                                <td style="background-color: red;">
+                                    <% } else { %>
+                                <td style="background-color: gray;">
+                                    <% } %>
+
+                                        <%= candidate.id %>
+                                </td>
+                                <td>
+                                    <%= candidate.protocol %>
+                                </td>
+                                <td>
+                                    <%= candidate.position %>
+                                </td>
+                                <td>
+                                    <%= candidate.name %>
+                                </td>
+                                <td>
+                                    <%= candidate.ageinyears %>
+                                </td>
+                                <td>
+                                    <%= candidate.email %>
+                                </td>
+                                <td>
+                                    <%= candidate.cpf %>
+                                </td>
+                                <td>
+                                    <%= candidate.tel %>
+                                </td>
+                                <td>
+                                    <%= candidate.city %>
+                                </td>
+                                <td>
+                                    <%= candidate.deficiency %>
+                                </td>
+                                <td>
+                                    <button id="<%= candidate.id %>"
+                                        onclick="openModal(event), setCandidateId(event)">👁️</button>
+                                </td>
+                        </tr>
+                        <% }) %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <!-- Modal para visualização do PDF -->
+    <div id="pdfModal">
+        <div class="modal-content">
+            <button onclick="closePDF()" style="background-color: red; border-radius: 10px; border: none; color: #fff; padding: 16px 0px; float: right;         font-size: 16px;
+        font-weight: bold;">Fechar</button>
+        <br>
+
+            <div class="tab-content" id="tab1Content" style="display: flex; height: 100%; align-items: center; overflow: hidden;">
+                <iframe id="select" style="width: 50%; height: 100%;" frameborder="0"></iframe>
+                <iframe id="user" style="width: 50%; height: 100%;" frameborder="0"></iframe>
+
+            
+            
+            </div>
+            
+
+    <script>
+        $(document).ready(function () {
+            $('#candidatesTable').DataTable({
+                "language": {
+                    "sProcessing": "Processando...",
+                    "sLengthMenu": "Mostrar _MENU_ registros",
+                    "sZeroRecords": "Nenhum registro encontrado",
+                    "sInfo": "Mostrando de _START_ até _END_ de _TOTAL_ registros",
+                    "sInfoEmpty": "Mostrando 0 até 0 de 0 registros",
+                    "sInfoFiltered": "(filtrado de _MAX_ registros totais)",
+                    "sSearch": "Pesquisar:",
+                    "oPaginate": {
+                        "sFirst": "Primeiro",
+                        "sPrevious": "Anterior",
+                        "sNext": "Próximo",
+                        "sLast": "Último"
+                    }
+                },
+                "paging": true,
+                "searching": true,
+                "ordering": true,
+                "order": [[0, 'asc']],
+            });
+        });
+
+
+
+        function openModal(event) {
+            // Exibir o modal
+            document.getElementById('pdfModal').style.display = 'flex';
+
+            // Alterar a aba ativa para "Dados do candidato" (primeira aba)
+            switchTab('tab1Content');
+        }
+
+
+        function setCandidateId(event) {
+            // Acessando o elemento que foi clicado
+            const element = event.target.id;
+            console.log(element)
+            localStorage.setItem("@id", element);
+            getid()
+        }
+
+        function getid() {
+            const buscaId = localStorage.getItem("@id");
+            const iframe_1 = document.querySelector("#select");
+            const iframe_2 = document.querySelector("#user");
+            iframe_1.setAttribute("src", `https://simplificada.saude.paulista.pe.gov.br/select/${buscaId}`)
+            iframe_2.setAttribute("src", `https://simplificada.saude.paulista.pe.gov.br/user/${buscaId}`)
+        }
+
+
+
+        function closePDF() {
+            console.log("fui chamado")
+            document.getElementById('pdfModal').style.display = 'none';
+            location.reload(); // Recarrega a página atual
+        }
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+    </script>
+
+</body>
+
+</html>

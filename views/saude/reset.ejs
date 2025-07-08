@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+    <title>Redefinir Senha</title>
+    <style>
+        /* Importa uma fonte moderna */
+        @import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap');
+
+        /* Estilos gerais */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #007bff, #6610f2);
+            color: #fff;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            text-align: center;
+            padding: 20px;
+        }
+
+        /* Container */
+        .container {
+            width: 100%;
+            max-width: 600px;
+            padding: 20px;
+        }
+
+        /* Card */
+        .card {
+            background: rgba(255, 255, 255, 0.15);
+            backdrop-filter: blur(10px);
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0px 0px 15px rgba(0, 0, 0, 0.2);
+            animation: fadeIn 0.5s ease-in-out;
+        }
+
+        /* Logo */
+        .card-header img {
+            border-radius: 10px;
+            max-width: 80%;
+        }
+
+        /* Formulário */
+        form {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        label {
+            font-weight: bold;
+            font-size: 16px;
+        }
+
+        input {
+            width: 100%;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            background: rgba(255, 255, 255, 0.3);
+            color: #fff;
+            outline: none;
+            transition: 0.3s;
+        }
+
+        input::placeholder {
+            color: #ddd;
+        }
+
+        input:focus {
+            background: rgba(255, 255, 255, 0.5);
+            border: 1px solid #fff;
+        }
+
+        /* Botões */
+        button,
+        .btn-primary {
+            background: #28a745;
+            color: white;
+            padding: 12px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            cursor: pointer;
+            width: 100%;
+            text-decoration: none;
+            transition: 0.3s;
+        }
+
+        button:hover,
+        .btn-primary:hover {
+            background: #218838;
+        }
+
+        /* Alerta */
+        .alert {
+            padding: 10px;
+            border-radius: 8px;
+            background: rgba(255, 255, 255, 0.2);
+            font-size: 14px;
+        }
+
+        /* Animação */
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsividade */
+        @media (max-width: 480px) {
+            body {
+                padding: 10px;
+            }
+
+            .container {
+                max-width: 100%;
+            }
+
+            .card {
+                padding: 15px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <div class="card">
+            <div class="card-header" style="display: flex; flex-direction: column; align-items: center;">
+                <img style="margin: 20px 0px;" src="/images/logoprefeitura.png" alt="Logo" width="40%" height="40%">
+            </div>
+            <div class="card-body">
+
+                <% if (typeof message !=="undefined" && message) { %>
+                    <div class="alert alert-info">
+                        <%= message %>
+                    </div>
+                    <script>
+                        setTimeout(function () {
+                            window.location.href = "/";
+                        }, 2000);
+                    </script>
+                    <% } %>
+
+                        <% if (typeof token !=="undefined" && token) { %>
+                            <form onsubmit="handleForms(event)" action="/reset-password/<%= token %>" method="POST">
+                                <label for="password">Nova Senha:</label>
+                                <input class="form-control" type="password" name="password" id="password"
+                                    placeholder="Digite sua nova senha" required>
+                                <br>
+                                <label for="confirm">Confirme sua senha:</label>
+                                <input class="form-control" type="password" name="confirm" id="confirm"
+                                    placeholder="Confirme sua senha" required>
+                                <br>
+                                <button type="submit" class="btn btn-primary">Redefinir Senha</button>
+                            </form>
+                            <% } %>
+
+            </div>
+        </div>
+    </div>
+    <script>
+
+async function handleForms(event) {
+    event.preventDefault();
+    const password = document.querySelector("#password").value;
+    const confirmPassword = document.querySelector("#confirm").value;
+    // Regex para validar a senha: pelo menos 8 caracteres, letras maiúsculas, minúsculas e números
+    const passwordRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,}$/;
+
+    // Verifica se a senha atende aos requisitos
+    if (password !== confirmPassword) {
+        alert("As senhas não batem!");
+    } else if (!passwordRegex.test(password)) {
+        alert("A senha deve ter pelo menos 8 caracteres, incluindo letras maiúsculas, minúsculas e números.");
+    } else {
+        // Submete o formulário
+        event.target.submit();
+    }
+}
+
+document.addEventListener("keydown", function (event) {
+  // Detectando F12
+  if (event.keyCode === 123) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + I
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 73) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + J
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 74) {
+    event.preventDefault();
+    return
+  }
+});
+
+document.addEventListener("contextmenu", function (event) {
+  event.preventDefault();  // Impede o menu de contexto padrão
+  return
+});
+
+    </script>
+</body>
+
+</html>

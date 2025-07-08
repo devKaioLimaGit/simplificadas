@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<html lang="pt">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resultado da Busca</title>
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            text-align: center;
+            padding: 50px;
+        }
+        .container {
+            max-width: 50%;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            margin: auto;
+        }
+        .error {
+            color: #d9534f;
+            background: #f8d7da;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+        }
+        .success {
+            color: #155724;
+            background: #d4edda;
+            padding: 15px;
+            border-radius: 5px;
+            font-size: 16px;
+            text-align: left;
+        }
+        .success p {
+            margin: 5px 0;
+            font-weight: bold;
+        }
+        .btn-primary {
+            background-color: #3498db;
+            border: none;
+            color: #f4f4f4;
+            border-radius: 10px;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <% if (error) { %>
+            <div class="error"><strong>Erro:</strong> <%= error %></div>
+        <% } %>
+
+        <% if (protocol) { %>
+            <div class="success">
+                <p>👤 Nome: <%= userName %></p>
+                <br>
+                <p>📜 N° Inscrição: <%= userProtocol %></p>
+                <br>
+                <p>📌 Função: <%= userPosition %></p>
+                <br>
+                <p>✅ Consulta realizada com sucesso, você está inscrito!</p>
+            </div>
+            <br>
+        <% } %>
+        <br>
+        <br>
+        <a href="/search"><button type="submit" class="btn-primary">Voltar para o campo da consulta</button></a>
+        <br>
+        <br>
+    </div>
+</body>
+</html>

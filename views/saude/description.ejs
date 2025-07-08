@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Descrição</title>
+    <script src="/utils/script.js" defer></script>
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+    <style>
+        *{
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        /* Estilizando a área de texto */
+        textarea {
+            width: 100%;
+            padding: 10px;
+            font-size: 16px;
+            border: 1px solid #3498db;
+            border-radius: 5px;
+            background-color: #ecf8ff;
+            resize: vertical;
+            min-height: 80px;
+            outline: none;
+            transition: border-color 0.3s, background-color 0.3s;
+        }
+
+        /* Foco na área de texto */
+        textarea:focus {
+            border-color: #1e7ac9;
+            background-color: #e1f3ff;
+        }
+
+        /* Scrollbar personalizada */
+        textarea::-webkit-scrollbar {
+            width: 12px;
+        }
+
+        textarea::-webkit-scrollbar-thumb {
+            background-color: #007bff;
+            border-radius: 20px;
+        }
+
+        textarea::-webkit-scrollbar-track {
+            background: #fff;
+        }
+    </style>
+</head>
+<body style="width: 100%; padding: 10px;">
+    <textarea name="" id=""><%= user.description %></textarea>
+</body>
+</html>

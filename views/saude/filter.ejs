@@ -1,0 +1,328 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+
+    <!-- Estilos -->
+    <style>
+        * {
+            font-family: sans-serif;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 0.5rem;
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .form-group select,
+        .form-group input[type="text"],
+        .form-group input[type="email"],
+        .form-group input[type="tel"],
+        .form-group input[type="date"],
+        .form-group textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 1rem;
+        }
+
+        .form-group select {
+            appearance: none;
+            background-image: url('data:image/svg+xml;charset=UTF-8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="%23333"><path d="M7 10l5 5 5-5z"/></svg>');
+            background-repeat: no-repeat;
+            background-position: right .7rem top 50%;
+            background-size: 1rem;
+        }
+
+        .form-group select:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+        }
+
+        .form-group textarea {
+            resize: vertical;
+        }
+
+        .form-actions {
+            text-align: center;
+        }
+
+        .btn {
+            width: 50%;
+            padding: 0.75rem;
+            border: none;
+            border-radius: 4px;
+            color: #fff;
+            background-color: #007bff;
+            cursor: pointer;
+            font-size: 1.1rem;
+            margin-top: 20px;
+            transition: background-color 0.3s;
+        }
+
+        .btn:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                padding: 1rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin-bottom: 0.5rem;
+            }
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        td {
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 5px;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+
+    <!-- Estilos do DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.12.1/css/jquery.dataTables.min.css" />
+
+    <!-- jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+    <!-- DataTables -->
+    <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js" defer></script>
+
+    <!-- docx.js versão compatível com browser -->
+    <script src="https://unpkg.com/docx@7.1.0/build/index.js" defer></script>
+
+
+
+    <title>Filtros</title>
+</head>
+
+<body>
+    <form action="https://simplificada.saude.paulista.pe.gov.br/filter/user" method="get">
+        <div class="form-group">
+            <label for="position">Função:</label>
+            <select name="position" id="position" required>
+                <option value="" selected disabled>Selecione</option>
+                <option value="" selected disabled>Selecione</option>
+                <option value="0000 ASSISTENTE SOCIAL 20H">0000 ASSISTENTE SOCIAL 20H</option>
+                <option value="1084 AUXÍLIAR DE SAÚDE BUCAL 24H">1084 AUXÍLIAR DE SAÚDE BUCAL 24H</option>
+                <option value="3116 AUXILIAR DE FARMÁCIA 40H">3116 AUXILIAR DE FARMÁCIA 40H</option>
+                <option value="1107 CARDIOLOGISTA 20H">1107 CARDIOLOGISTA 20H</option>
+                <option value="0000 CIRURGIÃO-DENTISTA - 24H">0000 CIRURGIÃO-DENTISTA - 24H</option>
+                <option value="0000 CONDUTOR SOCORRISTA - 12X36">0000 CONDUTOR SOCORRISTA - 12X36</option>
+                <option value="0000 CUIDADOR 12X36">0000 CUIDADOR 12X36</option>
+                <option value="1075 DERMATOLOGISTA 20H">1075 DERMATOLOGISTA 20H</option>
+                <option value="1109 ENDOCRINOLOGISTA 20H">1109 ENDOCRINOLOGISTA 20H</option>
+                <option value="1087 FARMACÊUTICO 40H">1087 FARMACÊUTICO 40H</option>
+                <option value="0000 FISIOTERAPEUTA COM ESPECIALIDADE EM TEA 20H">0000 FISIOTERAPEUTA COM ESPECIALIDADE
+                    EM TEA 20H</option>
+                <option value="1099 FONOAUDIÓLOGO 40H">1099 FONOAUDIÓLOGO 40H</option>
+                <option value="1076 GINECOLOGISTA/COLPOSCOPISTA 20H">1076 GINECOLOGISTA/COLPOSCOPISTA 20H</option>
+                <option value="1094 MASTOLOGISTA 20H">1094 MASTOLOGISTA 20H</option>
+                <option value="0000 MÉDICO EMERGENCISTA 24H">0000 MÉDICO EMERGENCISTA 24H</option>
+                <option value=" 0000 MÉDICO PEDIATRA EMERGENCISTA - 24H">0000 MÉDICO PEDIATRA EMERGENCISTA 24H</option>
+                <option value="1077 MÉDICO PSIQUIATRA ADULTO 20H">1077 MÉDICO PSIQUIATRA ADULTO 20H</option>
+                <option value="1091 MÉDICO PSIQUIATRA INFANTIL 20H">1091 MÉDICO PSIQUIATRA INFANTIL 20H</option>
+                <option value="0000 NEFROLOGISTA 20H">0000 NEFROLOGISTA 20H</option>
+                <option value="1092 NEUROLOGISTA 20H">1092 NEUROLOGISTA 20H</option>
+                <option value="0000 NEUROPEDIATRA - 20H">0000 NEUROPEDIATRA - 20H</option>
+                <option value="0000 ORTOPEDISTA 20H">0000 ORTOPEDISTA 20H</option>
+                <option value="0000 PNEUMOLOGISTA 20H">0000 PNEUMOLOGISTA 20H</option>
+                <option value="1089 PROFISSIONAL DE EDUCAÇÃO FÍSICA 20H">1089 PROFISSIONAL DE EDUCAÇÃO FÍSICA 20H
+                </option>
+                <option value="1083 PSICÓLOGO 40H">1083 PSICÓLOGO 40H</option>
+                <option value="0000 PSICOMOTRICISTA 30H">0000 PSICOMOTRICISTA 30H</option>
+                <option value="1113 REUMATOLOGISTA ">1113 REUMATOLOGISTA 20H</option>
+                <option value="0000 TÉCNICO DE ENFERMAGEM-MOTOLÂNCIA 12X60">0000 TÉCNICO DE ENFERMAGEM-MOTOLÂNCIA 12X60
+                </option>
+                <option value="1097 TERAPEUTA OCUPACIONAL 20H">1097 TERAPEUTA OCUPACIONAL 20H</option>
+                <option value="0000 UROLOGISTA 20H">0000 UROLOGISTA 20H</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label for="status">Status</label>
+            <select name="status" id="status">
+                <option value="aprovado">Aprovado</option>
+                <option value="reprovado">Reprovado</option>
+                <option value="ambos">Ambos</option>
+            </select>
+        </div>
+
+        <div class="form-actions">
+            <button type="submit" class="btn">Enviar</button>
+        </div>
+        <br><br>
+    </form>
+
+    <div class="container">
+        <div class="table-container">
+            <table id="candidatesTable">
+                <thead>
+                    <tr>
+                        <th>N° Inscrição</th>
+                        <th>Função</th>
+                        <th>Candidato</th>
+                        <th>Idade</th>
+                        <th>Nota</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <% if (!filterUser || filterUser.length===0) { %>
+                        <tr>
+                            <td colspan="5">Nenhum dado encontrado</td>
+                        </tr>
+                        <% } else { %>
+                            <% filterUser.forEach(element=> { %>
+                                <tr>
+                                    <td>
+                                        <%= element.protocol %>
+                                    </td>
+                                    <td>
+                                        <%= element.position %>
+                                    </td>
+                                    <td>
+                                        <%= element.name %>
+                                    </td>
+                                    <td>
+                                        <%= element.ageinyears %>
+                                    </td>
+                                    <td>
+                                        <%= element.notice %>
+                                    </td>
+                                </tr>
+                                <% }); %>
+                                    <% } %>
+                </tbody>
+            </table>
+            <button id="downloadWord" class="btn">Gerar Relatório em Word</button>
+        </div>
+    </div>
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+    $('#candidatesTable').DataTable({
+        columnDefs: [
+            {
+                targets: [3, 4], // 'Idade' = índice 3, 'Nota' = índice 4
+                type: 'num'
+            }
+        ],
+        order: [], // Habilita ordenação mas sem ordenar por padrão
+        lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "Todos"]],
+        language: {
+            url: "https://cdn.datatables.net/plug-ins/1.12.1/i18n/pt-BR.json"
+        }
+    });
+
+
+            document.getElementById("downloadWord").addEventListener("click", async () => {
+                if (!window.docx) {
+                    alert("Biblioteca docx não carregada. Tente novamente.");
+                    return;
+                }
+
+                const { Document, Packer, Paragraph, Table, TableRow, TableCell, TextRun } = window.docx;
+
+                // Pega os dados da tabela HTML
+                const tableElement = document.getElementById("candidatesTable");
+                const rows = tableElement.querySelectorAll("tr");
+
+                const wordTableRows = [];
+
+                rows.forEach((row, index) => {
+                    const cells = row.querySelectorAll("th, td");
+                    const wordCells = [];
+
+                    cells.forEach(cell => {
+                        wordCells.push(
+                            new TableCell({
+                                children: [new Paragraph(cell.textContent.trim())],
+                            })
+                        );
+                    });
+
+                    wordTableRows.push(
+                        new TableRow({
+                            children: wordCells,
+                        })
+                    );
+                });
+
+                const wordTable = new Table({
+                    rows: wordTableRows,
+                    width: {
+                        size: 100,
+                        type: "pct",
+                    },
+                });
+
+                const doc = new Document({
+                    sections: [
+                        {
+                            children: [
+                                new Paragraph({
+                                    children: [new TextRun("Relatório de Candidatos")],
+                                    heading: "Heading1",
+                                }),
+                                wordTable,
+                            ],
+                        },
+                    ],
+                });
+
+                const blob = await Packer.toBlob(doc);
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = "relatorio.docx";
+                a.click();
+                URL.revokeObjectURL(url);
+            });
+        });
+    </script>
+
+</body>
+
+</html>

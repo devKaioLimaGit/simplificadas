@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Análise</title>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,100;0,200;0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,100;1,200;1,300;1,400;1,500;1,600;1,700;1,800;1,900&display=swap"
+        rel="stylesheet">
+    <style>
+        /* Reset básico */
+        * {
+            margin: 0;
+            padding: 0;
+            font-family: "Poppins", sans-serif;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: #f4f4f4;
+            color: #333;
+            line-height: 1.6;
+            font-size: 16px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .form-analyze {
+            background-color: #fff;
+            border-radius: 8px;
+            padding: 2rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 600px;
+        }
+
+        .form-analyze h2 {
+            text-align: center;
+            font-size: 2rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .input-field,
+        .textarea-field {
+            width: 100%;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .input-field:focus,
+        .textarea-field:focus {
+            border-color: #007bff;
+            box-shadow: 0 0 5px rgba(0, 123, 255, 0.3);
+        }
+
+        .textarea-field {
+            resize: vertical;
+            min-height: 150px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 1rem 2rem;
+            font-size: 1rem;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .btn-aprovado {
+            background-color: #28a745;
+            /* Verde para aprovado */
+        }
+
+        .btn-aprovado:hover {
+            background-color: #218838;
+        }
+
+        .btn-reprovado {
+            background-color: #dc3545;
+            /* Vermelho para reprovado */
+        }
+
+        .btn-reprovado:hover {
+            background-color: #c82333;
+        }
+
+        .btn:disabled {
+            background-color: #6c757d;
+            cursor: not-allowed;
+        }
+
+        /* Mensagem de "Candidato já avaliado" */
+        .message {
+            text-align: center;
+            color: #ffc107;
+            font-size: 1.1rem;
+            margin-bottom: 20px;
+            font-weight: 600;
+        }
+
+        /* Responsividade */
+        @media (max-width: 768px) {
+            .form-analyze {
+                padding: 1.5rem;
+            }
+
+            .btn {
+                width: 100%;
+                margin-top: 10px;
+            }
+
+            .form-actions {
+                flex-direction: column;
+            }
+        }
+
+        /* Estilos aprimorados da tabela de indicadores */
+        .indicators-table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            margin-top: 1700px;
+            margin-bottom: 20px;
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            border-radius: 8px;
+            overflow: hidden;
+        }
+
+        .indicators-table thead th {
+            background-color: #007bff;
+            color: white;
+            padding: 12px 15px;
+            font-weight: 600;
+            text-align: left;
+            border-bottom: 2px solid #0056b3;
+        }
+
+        .indicators-table td {
+            padding: 12px 15px;
+            vertical-align: top;
+            border-bottom: 1px solid #e0e0e0;
+            background-color: #fff;
+            font-size: 14px;
+            transition: background-color 0.2s;
+        }
+
+        .indicators-table tr:hover td {
+            background-color: #f5faff;
+        }
+
+        .indicators-table tbody tr:last-child td {
+            border-bottom: none;
+        }
+
+        .indicators-table th:first-child,
+        .indicators-table td:first-child {
+            width: 50%;
+        }
+
+        .indicators-table th:nth-child(2),
+        .indicators-table td:nth-child(2) {
+            width: 30%;
+        }
+
+        .indicators-table th:nth-child(3),
+        .indicators-table td:nth-child(3) {
+            width: 20%;
+            text-align: center;
+        }
+
+        .indicators-table input[type="checkbox"] {
+            margin-right: 8px;
+            accent-color: #007bff;
+        }
+
+        .indicators-table tbody tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        @media (max-width: 768px) {
+            .indicators-table {
+                font-size: 13px;
+            }
+
+            .indicators-table th,
+            .indicators-table td {
+                padding: 10px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .indicators-table {
+                display: block;
+                overflow-x: auto;
+            }
+        }
+    </style>
+</head>
+
+<body style="width: 100%;display:  flex; flex-direction: column; align-items: center; justify-content: center;">
+    <table class="indicators-table">
+        <thead>
+            <tr>
+                <th>Indicadores</th>
+                <th>Pontuação Unitária</th>
+                <th>Pontuação Máxima Alcançada</th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr>
+                <td>Certificado ou declaração de conclusão de curso de pós-graduação “lato sensu” me nível de
+                    Especialização, com carga horária mínima de 360 horas, na especialidade a que concorre, até o limite
+                    de 2 (dois) certificados. O certificado/declaração deverá ser emitido por instituição de ensino
+                    oficialmente reconhecida ou outras especialmente credenciadas para oferta do referido curso,
+                    acompanhado do histórico-escolar. O curso deverá possuir credenciamento/reconhecimento acadêmico ou
+                    profissional junto aos sistemas oficiais de ensino ou Conselhos/Socied
+                    ades representativas das especialidades no âmbito nacional.
+                </td>
+                <td>
+                    <input type="checkbox" name="pos_lato_sensu" value="5"> 5 pontos<br>
+                    <input type="checkbox" name="pos_lato_sensu" value="5"> 5 pontos
+                </td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Certificado ou declaração de conclusão de Residência Multiprofissional em Área da Saúde, na
+                    especialidade a que concorre, até o limite de 1 (um) certificado, emitido pelo órgão responsável
+                    pelo programa de residência, acompanhado do histórico-escolar. Os programas de residências deverão
+                    ser credenciados pela Comissão Nacional de Residência Multiprofissional em Saúde, conforme o
+                    programa de residência.</td>
+                <td>
+                    <input type="checkbox" name="residencia" value="10"> 10 pontos
+                </td>
+                <td>10</td>
+            </tr>
+            <tr>
+                <td>Diploma ou declaração de conclusão de curso de pós-graduação “stricto sensu” em nível de mestrado,
+                    na especialidade a que concorra, emitido por Instituição de ensino oficialmente reconhecida,
+                    acompanhado do histórico-escolar.</td>
+                <td>
+                    <input type="checkbox" name="mestrado" value="15"> 15 pontos
+                </td>
+                <td>15</td>
+            </tr>
+            <tr>
+                <td>Diploma ou declaração de conclusão de curso de pós-graduação “stricto sensu” em nível de doutorado,
+                    na especialidade a que concorre, emitido por instituição de ensino oficialmente reconhecida,
+                    acompanhado do histórico-escolar.</td>
+                <td>
+                    <input type="checkbox" name="doutorado" value="20"> 20 pontos
+                </td>
+                <td>20</td>
+            </tr>
+            <tr>
+                <td>Artigo publicado, como autor, em periódico nacional ou internacional (Qualls A ou B) ou co-autoria
+                    em bibliografia na área da especialidade pretendida, até o limite de 3 (três) publicações.</td>
+                <td>
+                    <input type="checkbox" name="artigo" value="2"> 2 pontos<br>
+                    <input type="checkbox" name="artigo" value="2"> 2 pontos<br>
+                    <input type="checkbox" name="artigo" value="2"> 2 pontos
+                </td>
+                <td>6</td>
+            </tr>
+            <tr>
+                <td>Cursos de capacitação em áreas correlatas às atividades inerentes ao cargo para o qual o candidato
+                    se inscreveu, com carga horária completa entre 80 a 100 horas.</td>
+                <td>
+                    <input type="checkbox" name="curso_capacitacao" value="1.5"> 1,5 pontos<br>
+                    <input type="checkbox" name="curso_capacitacao" value="1.5"> 1,5 pontos
+                </td>
+                <td>3</td>
+            </tr>
+            <tr>
+                <td>Experiência profissional na área referente à função a que concorre.</td>
+                <td>
+                    <input type="checkbox" name="exp_profissional" value="4"> 4 pontos<br>
+                    <input type="checkbox" name="exp_profissional" value="4"> 4 pontos<br>
+                    <input type="checkbox" name="exp_profissional" value="4"> 4 pontos<br>
+                    <input type="checkbox" name="exp_profissional" value="4"> 4 pontos
+                </td>
+                <td>16</td>
+            </tr>
+            <tr>
+                <td>Experiência profissional na área referente à função que concorre no Sistema Único de Saúde.</td>
+                <td>
+                    <input type="checkbox" name="exp_sus" value="5"> 5 pontos<br>
+                    <input type="checkbox" name="exp_sus" value="5"> 5 pontos<br>
+                    <input type="checkbox" name="exp_sus" value="5"> 5 pontos<br>
+                    <input type="checkbox" name="exp_sus" value="5"> 5 pontos
+                </td>
+                <td>20</td>
+            </tr>
+            <tr>
+                <td colspan="2" style="text-align: right; font-weight: bold;">Total Máximo Alcançado:</td>
+                <td><span id="total_maximo">0</span> pontos</td>
+            </tr>
+        </tbody>
+    </table>
+    <br>
+    <br>
+    <button
+        style=" min-width: 600px; padding:10px 20px; border: none; background-color: #007bff; text-decoration: none; border-radius: 10px; color: #fff;"
+        onclick="sendNote()">REGISTRA NOTA</button>
+    <br>
+    <br>
+    <form action="https://simplificada.saude.paulista.pe.gov.br/isvalid" method="post" class="form-analyze">
+        <h2>Avaliação do candidato:</h2>
+
+
+        <!-- Verificando o estado de isValid -->
+        <% if (user.isValid===null) { %>
+            <!-- Se isValid for null, os botões estão habilitados -->
+            <input type="hidden" id="candidateId" name="candidateId" class="input-field"
+                placeholder="Digite o ID do Candidato">
+            <input type="hidden" id="available" name="available" class="input-field" placeholder="available">
+            <input type="hidden" id="notice" name="notice" class="input-field" placeholder="notice">
+            <input type="hidden" id="statusregiste" name="statusregiste" class="input-field" placeholder="Status"
+                required>
+            <input type="hidden" id="statusaprovado" name="aprovado" class="input-field" placeholder="aprovado" required>
+            <input type="hidden" id="statusreprovado" name="reprovado" class="input-field" placeholder="reprovado"
+                required>
+
+            <textarea id="textarea" class="textarea-field textarea-field-avalibe" name="description" required
+                placeholder="Comentários..."></textarea>
+            <div class="form-actions">
+                <input type="submit" onclick="aprovadoButton(event)" class="btn btn-aprovado" value="Aprovado" >
+                <input type="submit" onclick="reprovadoButton(event)" class="btn btn-reprovado" value="Reprovado" >
+                <!-- <input type="submit" onclick="aprovadoButton(event)" class="btn btn-aprovado" name="aprovado" value="Aprovado">
+                <input type="submit" onclick="reprovadoButton(event)" class="btn btn-reprovado" name="reprovado" value="Reprovado"> -->
+
+            </div>
+            <% } else { %>
+                <!-- Se isValid for 0 ou 1, os botões são desabilitados -->
+                <div class="message">
+                    Candidato já avaliado. Não é possível alterar a avaliação.
+                </div>
+                <h3>Status:</h3>
+                <textarea id="textarea" class="textarea-field" name="description" placeholder="Comentários..."
+                    readonly><%= user.description %></textarea>
+                <div class="form-actions">
+                    <input type="submit" onclick="aprovadoButton(event)" class="btn btn-aprovado" name="aprovado"
+                        value="Aprovado" disabled>
+                    <input type="submit" onclick="reprovadoButton(event)" class="btn btn-reprovado" name="reprovado"
+                        value="Reprovado" disabled>
+                    <!-- <input type="submit" onclick="aprovadoButton(event)" class="btn btn-aprovado" name="aprovado" value="Aprovado">
+                    <input type="submit" onclick="reprovadoButton(event)" class="btn btn-reprovado" name="reprovado" value="Reprovado"> -->
+                </div>
+                <% } %>
+    </form>
+    <script>
+
+
+
+        function sendNote() {
+            const status = document.querySelector("#statusregiste");
+            const aprovado = document.querySelector("#statusaprovado");
+            aprovado.value = "Aprovado"
+            status.value = "True"
+            const total_maximo = document.querySelector("#total_maximo");
+            const inputNotice = document.querySelector("#notice")
+            const inputAvailable = document.querySelector("#available")
+            inputAvailable.value = JSON.stringify(selecoesCandidato)
+            inputNotice.value = total_maximo.innerText;
+            alert("Nota Registrada!")
+
+
+        }
+
+
+        // Lógica dos indicadores e pontuação máxima
+        const indicadores = {
+            "pos_lato_sensu": { unitaria: 5, limite: 2, maximo: 10 },
+            "residencia": { unitaria: 10, limite: 1, maximo: 10 },
+            "mestrado": { unitaria: 15, limite: 1, maximo: 15 },
+            "doutorado": { unitaria: 20, limite: 1, maximo: 20 },
+            "artigo": { unitaria: 2, limite: 3, maximo: 6 },
+            "curso_capacitacao": { unitaria: 1.5, limite: 2, maximo: 3 },
+            "exp_profissional": { unitaria: 4, limite: 4, maximo: 16 },
+            "exp_sus": { unitaria: 5, limite: 4, maximo: 20 }
+        };
+
+        let selecoesCandidato;
+
+        function atualizarTotal() {
+            let totalMaximo = 0;
+            selecoesCandidato = {}; // Resetar o objeto a cada atualização
+            for (const indicador in indicadores) {
+                const checkboxesMarcados = document.querySelectorAll(`input[name="${indicador}"]:checked`);
+                const quantidadeMarcados = checkboxesMarcados.length;
+
+                if (quantidadeMarcados > 0) {
+                    const pontos = Math.min(quantidadeMarcados, indicadores[indicador].limite) * indicadores[indicador].unitaria;
+                    totalMaximo += pontos;
+
+                    // Armazenar os valores marcados no objeto
+                    selecoesCandidato[indicador] = {
+                        quantidade: quantidadeMarcados,
+                        pontosUnitarios: indicadores[indicador].unitaria,
+                        pontosTotais: pontos
+                    };
+                }
+            }
+
+            document.getElementById("total_maximo").innerText = totalMaximo;
+
+            // Exibir o objeto no console (você pode remover isso depois de testar)
+            console.log("Seleções do candidato:", selecoesCandidato);
+
+            // Aqui você pode chamar uma função para salvar no banco de dados
+            // salvarNoBanco(selecoesCandidato, totalMaximo);
+        }
+
+        // Adicionar evento de mudança nos checkboxes
+        document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
+            checkbox.addEventListener("change", function () {
+                const name = this.name;
+                const maximo = indicadores[name].limite;
+                const marcados = document.querySelectorAll(`input[name="${name}"]:checked`).length;
+
+                if (marcados > maximo) {
+                    this.checked = false;
+                }
+                atualizarTotal();
+            });
+        });
+
+        // Inicializar o total
+        atualizarTotal();
+
+        // Exemplo de função para simular salvamento no banco
+        function salvarNoBanco(selecoes, total) {
+            const dadosParaSalvar = {
+                selecoes: selecoes,
+                pontuacaoTotal: total,
+                data: new Date().toISOString()
+            };
+            console.log("Dados para salvar no banco:", dadosParaSalvar);
+            // Aqui você implementaria a lógica real para salvar no banco de dados
+        }
+
+
+        const idInput = document.querySelector("#candidateId")
+        console.log(idInput)
+        const buscaId = localStorage.getItem("@id");
+        idInput.value = buscaId
+
+
+
+        function reprovadoButton(event) {
+            event.preventDefault();  // Impede o envio padrão do formulário
+
+            // Seleciona os elementos
+            const status = document.querySelector("#statusregiste");
+                const reprovado = document.querySelector("#statusreprovado");
+                reprovado.value = "Reprovado"
+            const description = document.querySelector(".textarea-field-avalibe"); // Corrigido o ID conforme seu código original
+
+            console.log(description)
+
+            // Verifica se o description está vazio
+            if (!description || description.value.trim() === "") {
+                alert("Por favor, preencha o campo de comentários antes de reprovar.");
+                return; // Interrompe a execução se o campo estiver vazio
+            }
+
+            // Altera o valor do input statusregiste
+            if (status) {
+                status.value = "False";
+            }
+
+            // Encontra o formulário mais próximo do botão clicado e envia
+            const form = event.target.closest("form");
+            if (form) {
+                form.submit();
+            }
+        }
+
+
+        function aprovadoButton(event) {
+
+            event.preventDefault();  // Impede o envio padrão do formulário
+
+            // Seleciona os elementos
+            const status = document.querySelector("#statusregiste");
+
+
+            const description = document.querySelector(".textarea-field-avalibe"); // Ajustado conforme sua classe
+
+            // Verifica se o status está vazio
+            if (!status || status.value.trim() === "") {
+                alert("Por favor, clique no botão 'Registrar Nota' antes de aprovar!");
+                return; // Interrompe a execução se o status estiver vazio
+            }
+
+            // Verifica se o description está vazio
+            if (!description || description.value.trim() === "") {
+                alert("Por favor, adicione um comentário antes de aprovar!");
+                return; // Interrompe a execução se o campo estiver vazio
+            }
+
+            // Altera o valor do input statusregiste (caso precise de ajuste adicional)
+            if (status) {
+                status.value = "True"; // Define como "True" para aprovação
+            }
+
+            // Encontra o formulário mais próximo do botão clicado e envia
+            const form = event.target.closest("form");
+            if (form) {
+                form.submit();
+            }
+        }
+
+    </script>
+</body>
+
+</html>

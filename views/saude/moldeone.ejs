@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <!-- Incluir o CSS do DataTable -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.10.25/css/jquery.dataTables.min.css">
+    <!-- Incluir o jQuery -->
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Incluir o JS do DataTable -->
+    <script src="https://cdn.datatables.net/1.10.25/js/jquery.dataTables.min.js"></script>
+    <style>
+        *{
+            font-family: sans-serif;
+        }
+         /* Estilos da tabela */
+         table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th {
+         
+            background-color: #007bff;
+            color: white;
+            padding: 10px;
+            text-align: center;
+        }
+
+        td {
+            background-color: white;
+            padding: 10px;
+            text-align: center;
+            border: 1px solid #ccc;
+        }
+
+        /* Estilo da tabela quando o DataTables é usado */
+        .dataTables_wrapper .dataTables_filter input {
+            padding: 5px;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button {
+            padding: 5px 10px;
+            background-color: #007bff;
+            color: white;
+            border: none;
+            cursor: pointer;
+        }
+        .dataTables_wrapper .dataTables_paginate .paginate_button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+    <div class="tab-content" id="tab1Content">
+        <h2>Dados Completos do Candidato</h2>
+        <div class="table-container" style="overflow:scroll;">
+            <table id="candidatesTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>N° Inscrição</th>
+                        <th>Nome</th>
+                        <th>Mãe</th>
+                        <th>Raça/COR</th>
+                        <th>Tipo Sanguíneo</th>
+                        <th>Gênero</th>
+                        <th>Título Eleitoral</th>
+                        <th>PIS</th>
+                        <th>Cidade De Nacimento</th>
+                        <th>Local de Nascimento</th>
+                        <th>Status Civíl</th>
+                        <th>Idade</th>
+                        <th>Data de Nascimento</th>
+                        <th>RG</th>
+                        <th>Órgão</th>
+                        <th>CPF</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>CEP</th>
+                        <th>Endereço</th>
+                        <th>Número</th>
+                        <th>Complemento</th>
+                        <th>Cidade</th>
+                        <th>Bairro</th>
+                        <th>Função</th>
+                        <th>Experiência (Saída)</th>
+                        <th>Experiência</th>
+                        <th>Registro Conselho</th>
+                        <th>Deficiência</th>
+                        <th>Contexto Deficiência</th>
+                        <th>Assessoria</th>
+                        <th>Júri</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td><%= user.id %></td>
+                        <td><%= user.protocol %></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.mother %></td>
+                        <td><%= user.raceandcolor %></td>
+                        <td><%= user.bloodtype %></td>
+                        <td><%= user.gender %></td>
+                        <td><%= user.title %></td>
+                        <td><%= user.pis %></td>
+                        <td><%= user.cityofbirth %></td>
+                        <td><%= user.birthplacestate %></td>
+                        <td><%= user.civilstatus %></td>
+                        <td><%= user.ageinyears %></td>
+                        <td><%= user.birth %></td>
+                        <td><%= user.rg %></td>
+                        <td><%= user.organ %></td>
+                        <td><%= user.cpf %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.tel %></td>
+                        <td><%= user.zip %></td>
+                        <td><%= user.address %></td>
+                        <td><%= user.housenumber %></td>
+                        <td><%= user.housecomplement %></td>
+                        <td><%= user.city %></td>
+                        <td><%= user.neighborhood %></td>
+                        <td><%= user.position %></td>
+                        <td><%= user.experienceExit %></td>
+                        <td><%= user.experience %></td>
+                        <td><%= user.registrationCouncil %></td>
+                        <td><%= user.deficiency %></td>
+                        <td><%= user.deficiencyContext %></td>
+                        <td><%= user.advice %></td>
+                        <td><%= user.jury %></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="container-available"></div>
+
+        <input type="hidden" id="available" value="<%= user.available%>" >
+    </div>
+<br>
+<br>
+<iframe style="width: 100%; height: 100vh;" src="/tmp/<%= user.filename%>" frameborder="0"></iframe>
+<script>
+    $(document).ready(function () {
+        $('#candidatesTable').DataTable({
+            "language": {
+                "sProcessing": "Processando...",
+                "sLengthMenu": "Mostrar _MENU_ registros",
+                "sZeroRecords": "Nenhum registro encontrado",
+                "sInfo": "",                // Remove a exibição de informações (como "Mostrando de X até Y de Z registros")
+                "sInfoEmpty": "",           // Remove a exibição quando não há registros
+                "sInfoFiltered": "",        // Remove a exibição de registros filtrados
+                "sSearch": "Pesquisar:",
+                "oPaginate": {
+                    "sFirst": "Primeiro",
+                    "sPrevious": "Anterior",
+                    "sNext": "Próximo",
+                    "sLast": "Último"
+                }
+            },
+            "paging": false,            // Desativa a paginação
+            "searching": false,         // Desativa o campo de pesquisa
+            "ordering": true,           // Permite a ordenação
+            "order": [[0, 'asc']],      // Define a ordem padrão (coluna 0 em ordem ascendente)
+            "info": false               // Desativa a exibição das informações de registros
+        });
+    });
+
+// Pegar o valor do input e parsear o JSON
+const inputAvailable = document.querySelector("#available").value;
+const available = JSON.parse(inputAvailable);
+
+// Mapeamento para nomes amigáveis
+const nomesAmigaveis = {
+    "pos_lato_sensu": "Cert./Dlec. 'Lato Sensu'",
+    "residencia": "Residencia Multiprofissional",
+    "mestrado": "Cert. 'Stricto Sensu' - Mestrado",
+    "doutorado": "Cert. 'Stricto Sensu' - Doutorado",
+    "artigo": "Artigo",
+    "curso_capacitacao": "Curso de Capacitação",
+    "exp_profissional": "Experiência Profissional",
+    "exp_sus": "Experiência SUS"
+};
+
+// Função para criar a tabela
+function model(data) {
+    const containerAvailable = document.querySelector(".container-available");
+    const div = document.createElement("div");
+
+    // Criar a estrutura da tabela
+    let tableHTML = `
+        <table>
+            <thead>
+                <tr>
+                    <th>Indicador</th>
+                    <th>Quantidade</th>
+                    <th>Pontos Unitários</th>
+                    <th>Pontos Totais</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
+
+    // Iterar sobre os indicadores no objeto
+    for (const indicador in data) {
+        const { quantidade, pontosUnitarios, pontosTotais } = data[indicador];
+        const nomeExibicao = nomesAmigaveis[indicador] || indicador; // Usa o nome amigável ou o original
+        tableHTML += `
+            <tr>
+                <td>${nomeExibicao}</td>
+                <td>${quantidade}</td>
+                <td>${pontosUnitarios}</td>
+                <td>${pontosTotais}</td>
+            </tr>
+        `;
+    }
+
+    tableHTML += `
+            </tbody>
+        </table>
+    `;
+
+    // Adicionar a tabela ao div
+    div.innerHTML = tableHTML;
+    containerAvailable.appendChild(div);
+}
+
+// Chamar a função com os dados parseados
+model(available);
+
+// Log para verificar os dados
+console.log(available);
+</script>
+
+</body>
+</html>

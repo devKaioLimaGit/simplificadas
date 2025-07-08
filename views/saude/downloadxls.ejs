@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <script src="/utils/script.js" defer></script> -->
+    <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
+    <title>Download</title>
+    <link rel="stylesheet" href="/styles.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.2/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            visibility: hidden;
+        }
+        .container { padding: 20px; }
+        .table-container { overflow-x: auto; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+    </style>
+</head>
+<body onload="checkAndDownload()">
+    <div class="container">
+        <h1>Lista de Candidatos</h1>
+        <button id="exportButton">Exportar para Excel</button>
+        <div class="table-container">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>N° Inscrição</th>
+                        <th>Nome</th>
+                        <th>Mãe</th>
+                        <th>Raça/COR</th>
+                        <th>Tipo Sanguíneo</th>
+                        <th>Gênero</th>
+                        <th>Título Eleitoral</th>
+                        <th>PIS</th>
+                        <th>Cidade De Nacimento</th>
+                        <th>Local de Nascimento</th>
+                        <th>Status Civíl</th>
+                        <th>Idade</th>
+                        <th>Data de Nascimento</th>
+                        <th>RG</th>
+                        <th>Órgão</th>
+                        <th>CPF</th>
+                        <th>Email</th>
+                        <th>Telefone</th>
+                        <th>CEP</th>
+                        <th>Endereço</th>
+                        <th>Número</th>
+                        <th>Complemento</th>
+                        <th>Cidade</th>
+                        <th>Bairro</th>
+                        <th>Função</th>
+                        <th>Experiência (Saída)</th>
+                        <th>Experiência</th>
+                        <th>Registro Conselho</th>
+                        <th>Deficiência</th>
+                        <th>Contexto Deficiência</th>
+                        <th>Assessoria</th>
+                        <th>Júri</th>
+                        <th>Descrição</th>
+                        <th>Pontuação</th>
+                        <th>Avaliação</th>
+                        <!-- <th>Data e Hora de Criação</th> -->
+                    </tr>
+                </thead>
+                <tbody>
+                    <% candidates.forEach(function(user) { %>
+                    <tr>
+                        <td><%= user.id %></td>
+                        <td><%= user.protocol %></td>
+                        <td><%= user.name %></td>
+                        <td><%= user.mother %></td>
+                        <td><%= user.raceandcolor %></td>
+                        <td><%= user.bloodtype %></td>
+                        <td><%= user.gender %></td>
+                        <td><%= user.title %></td>
+                        <td><%= user.pis %></td>
+                        <td><%= user.cityofbirth %></td>
+                        <td><%= user.birthplacestate %></td>
+                        <td><%= user.civilstatus %></td>
+                        <td><%= user.ageinyears %></td>
+                        <td><%= user.birth %></td>
+                        <td><%= user.rg %></td>
+                        <td><%= user.organ %></td>
+                        <td><%= user.cpf %></td>
+                        <td><%= user.email %></td>
+                        <td><%= user.tel %></td>
+                        <td><%= user.zip %></td>
+                        <td><%= user.address %></td>
+                        <td><%= user.housenumber %></td>
+                        <td><%= user.housecomplement %></td>
+                        <td><%= user.city %></td>
+                        <td><%= user.neighborhood %></td>
+                        <td><%= user.position %></td>
+                        <td><%= user.experienceExit %></td>
+                        <td><%= user.experience %></td>
+                        <td><%= user.registrationCouncil %></td>
+                        <td><%= user.deficiency %></td>
+                        <td><%= user.deficiencyContext %></td>
+                        <td><%= user.advice %></td>
+                        <td><%= user.jury %></td>
+                        <td><%= user.description %></td>
+                        <td><%= user.notice %></td>
+                        <td><%= user.available %></td>
+                        <!-- <td><small><%= new Date(user.createdAt).toLocaleString() %></small></td> -->
+                    </tr>
+                    <% }); %>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Função para verificar se há dados antes de baixar
+        function checkAndDownload() {
+            const table = document.querySelector("table");
+            const rowCount = table.rows.length;
+            if (rowCount <= 1) { // Apenas cabeçalho, sem dados
+                alert("Nenhum dado disponível para exportar.");
+                return;
+            }
+            download();
+        }
+
+        // Função de download
+        function download() {
+            const table = document.querySelector("table");
+            const wb = XLSX.utils.table_to_book(table, { sheet: "Candidatos" });
+            const ws = wb.Sheets["Candidatos"];
+
+            // Estilo do cabeçalho
+            const headerStyle = {
+                fill: { fgColor: { rgb: "FFC107" } }, // Amarelo escuro
+                font: { bold: true, color: { rgb: "000000" } }, // Negrito e preto
+                alignment: { horizontal: "center", vertical: "center" },
+                border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } }
+                }
+            };
+
+            // Estilos para colunas de dados (cores alternadas suaves)
+            const evenColumnStyle = {
+                fill: { fgColor: { rgb: "E8F5E9" } }, // Verde claro
+                border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } }
+                }
+            };
+            const oddColumnStyle = {
+                fill: { fgColor: { rgb: "F5F5F5" } }, // Cinza claro
+                border: {
+                    top: { style: "thin", color: { rgb: "000000" } },
+                    left: { style: "thin", color: { rgb: "000000" } },
+                    right: { style: "thin", color: { rgb: "000000" } },
+                    bottom: { style: "thin", color: { rgb: "000000" } }
+                }
+            };
+
+            // Aplicar estilo ao cabeçalho (primeira linha)
+            const colCount = table.rows[0].cells.length;
+            for (let col = 0; col < colCount; col++) {
+                const cellRef = XLSX.utils.encode_cell({ c: col, r: 0 });
+                if (!ws[cellRef]) ws[cellRef] = { v: table.rows[0].cells[col].innerText || "" };
+                ws[cellRef].s = headerStyle;
+            }
+
+            // Aplicar cores alternadas às colunas de dados
+            for (let row = 1; row < table.rows.length; row++) {
+                for (let col = 0; col < table.rows[row].cells.length; col++) {
+                    const cellRef = XLSX.utils.encode_cell({ c: col, r: row });
+                    if (!ws[cellRef]) ws[cellRef] = { v: table.rows[row].cells[col].innerText || "" };
+                    ws[cellRef].s = (col % 2 === 0) ? evenColumnStyle : oddColumnStyle;
+                }
+            }
+
+            // Definir filtros automáticos
+            ws['!autofilter'] = { ref: XLSX.utils.encode_range({ s: { r: 0, c: 0 }, e: { r: table.rows.length - 1, c: colCount - 1 } }) };
+
+            // Exportar o arquivo
+            XLSX.writeFile(wb, "candidatos.xlsx");
+        }
+
+        // Evento do botão
+        document.getElementById("exportButton").addEventListener("click", download);
+
+        document.addEventListener("keydown", function (event) {
+  // Detectando F12
+  if (event.keyCode === 123) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + I
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 73) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + J
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 74) {
+    event.preventDefault();
+    return
+  }
+});
+
+document.addEventListener("keydown", function (event) {
+  // Detectando F12
+  if (event.keyCode === 123) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + I
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 73) {
+    event.preventDefault();
+    return
+  }
+
+  // Detectando Ctrl + Shift + J
+  if (event.ctrlKey && event.shiftKey && event.keyCode === 74) {
+    event.preventDefault();
+    return
+  }
+});
+
+document.addEventListener("contextmenu", function (event) {
+  event.preventDefault();  // Impede o menu de contexto padrão
+  return
+});
+    </script>
+</body>
+</html>

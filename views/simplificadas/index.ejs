@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+
+<head>
+    <meta charset="UTF-8" />
+    <title>Simplificadas Paulista</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <link rel="stylesheet" href="/styles/simplificadas.css" />
+
+</head>
+
+<body>
+    <!-- Fundo Animado -->
+    <div class="background">
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span><span></span><span></span><span></span><span></span>
+        <span></span>
+    </div>
+
+    <header>
+        <div class="sub-header">
+            <img src="images/logoprefeitura.png" alt="Logo da Prefeitura Municipal">
+        </div>
+    </header>
+
+    <main>
+        <!-- Tela Inicial -->
+        <div class="container" id="container-cards">
+            <div class="card" data-conteudo="saude">
+                <img src="images/saude.png" alt="Imagem Simplificada da Saúde">
+                <h3>Simplificada da Saúde</h3>
+                <p><strong>Seleção para vagas temporárias para Secretaria da Saúde.</strong></p>
+                <button id="status-processo-saude" class="status-button status-fechado"
+                    aria-label="Status do processo da Saúde: Fechado">
+                    <span class="emoji-status">🔴</span>
+                    <span class="texto-status">FECHADO</span>
+                </button>
+                <button class="btn-acessar" data-conteudo="saude"
+                    aria-label="Acessar Processo Simplificado da Saúde">Acessar Simplificada</button>
+            </div>
+
+            <div class="card" data-conteudo="sema">
+                <img src="images/sema.png" alt="Imagem Simplificada Sema">
+                <h3>Simplificada da Secretaria de Meio Ambiente</h3>
+                <p><strong>Seleção para vagas temporárias para Secretaria de Meio Ambiente.</strong></p>
+                <button class="status-button status-andamento" aria-label="Status do processo da Sema: Em Andamento">
+                    <span class="emoji-status">🟡</span>
+                    <span class="texto-status">Em Andamento</span>
+                </button>
+                <button class="btn-acessar" data-conteudo="sema" aria-label="Acessar Processo Simplificado Sema">Acessar
+                    Simplificada</button>
+            </div>
+        </div>
+
+        <!-- Menu Principal - Saúde -->
+        <div id="conteudo-saude" class="conteudo-alternativo hidden">
+            <h2>Simplificada da Saúde</h2>
+            <button id="status-processo-saude" class="status-button status-fechado"
+                aria-label="Status do processo da Saúde: Fechado">
+                <span class="emoji-status">🔴</span>
+                <span class="texto-status">FECHADO</span>
+            </button>
+
+            <br><br>
+            <div class="container">
+                <div class="card-saude">
+                    <img src="images/historico.png" alt="Histórico de Inscrições">
+                    <h3>Consulte sua Inscrição</h3>
+                    <p>Veja a consulta da suas inscrições realizadas no sistema Simplificado da Saúde.</p>
+                    <a href="http://localhost:8081/search"><button>Ver Histórico</button></a>
+                </div>
+                <div class="card-saude">
+                    <img src="images/inscricao.png" alt="Formulário de Inscrição">
+                    <h3>Fazer Inscrição</h3>
+                    <p>Inicie uma nova inscrição para as vagas disponiveis da Saúde clique abaixo</p>
+                    <br>
+                    <a href="http://localhost:8081/" class="btn-acessar"
+                        aria-label="Iniciar nova inscrição para a Saúde">Inscreva-se</a>
+                </div>
+                <div class="card-saude">
+                    <img src="images/voltar.png" alt="Voltar para Página Inicial">
+                    <h3>Voltar para Página Inicial</h3>
+                    <p>Retornar à tela principal com todas as opções disponiveis no Sistema.</p>
+                    <br>
+                    <a href="/"><button>Voltar</button></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico - Saúde -->
+        <div id="historico-saude" class="conteudo-alternativo hidden">
+            <img src="images/historico.png" alt="Histórico de Inscrições">
+            <h2>Histórico de Inscrições - Saúde</h2>
+            <ul id="lista-historico-saude" role="list"></ul>
+            <button id="btn-voltar-historico-saude" aria-label="Voltar para o menu da Saúde">Voltar</button>
+        </div>
+
+        <!-- Menu Principal - Sema -->
+        <div id="conteudo-sema" class="conteudo-alternativo hidden">
+            <h2>Simplificada Sema</h2>
+            <button id="status-processo-sema" class="status-button status-andamento"
+                aria-label="Status do processo da Sema: Em Andamento">
+                <span class="emoji-status">🟡</span>
+                <span class="texto-status">Em Andamento</span>
+            </button>
+            <br><br>
+            <div class="container">
+                <div class="card-sema">
+                    <img src="images/historico.png" alt="Histórico de Inscrições">
+                    <h3>Histórico de Inscrições</h3>
+                    <p>Veja seu histórico de inscrições realizadas no sistema Simplificado da Sema.</p>
+                    <button id="btn-historico-sema" aria-label="Ver histórico de inscrições Sema">Ver Histórico</button>
+                </div>
+                <div class="card-sema">
+                    <img src="images/inscricao.png" alt="Formulário de Inscrição">
+                    <h3>Fazer Inscrição</h3>
+                    <p>Inicie uma nova inscrição para as vagas disponiveis da Sema clique abaixo</p>
+                    <a href="/inscricao-sema" class="btn-acessar"
+                        aria-label="Iniciar nova inscrição para Sema">Inscreva-se</a>
+                </div>
+                <div class="card-sema">
+                    <img src="images/voltar.png" alt="Voltar para Página Inicial">
+                    <h3>Voltar para Página Inicial</h3>
+                    <p>Retornar à tela principal com todas as opções disponiveis no Sistema.</p>
+                    <a href="/"><button>Voltar</button></a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Histórico - Sema -->
+        <div id="historico-sema" class="conteudo-alternativo hidden">
+            <img src="images/historico.png" alt="Histórico de Inscrições">
+            <h2>Histórico de Inscrições - Sema</h2>
+            <ul id="lista-historico-sema" role="list"></ul>
+            <button id="btn-voltar-historico-sema" aria-label="Voltar para o menu Sema">Voltar</button>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content">
+            <p>© 2025 Prefeitura Municipal - Todos os direitos reservados.</p>
+            <p>Contato: <a href="mailto:suporte@prefeitura.gov.br">suporte@prefeitura.gov.br</a> | Telefone: <a
+                    href="tel:+5511999999999">(11) 99999-9999</a></p>
+        </div>
+    </footer>
+
+    <script>
+        // Dados simulados para históricos
+        const dadosHistoricoSaude = [
+            "✅ Inscrição Aprovada - Processo 123",
+            "⏳ Inscrição Pendente - Processo 124",
+            "❌ Inscrição Rejeitada - Processo 125",
+            "✅ Inscrição Aprovada - Processo 126"
+        ];
+
+        const dadosHistoricoSema = [
+            "✅ Inscrição Aprovada - Processo 223",
+            "⏳ Inscrição Pendente - Processo 224",
+            "⏳ Inscrição Pendente - Processo 225",
+            "❌ Inscrição Rejeitada - Processo 226"
+        ];
+
+        // Status dos processos
+        const statusProcessos = {
+            saude: { emoji: "🟢", texto: "Aberto" },
+            sema: { emoji: "🟡", texto: "Em Andamento" }
+        };
+
+        // Elementos
+        const containerCards = document.getElementById('container-cards');
+        const conteudoSaude = document.getElementById('conteudo-saude');
+        const historicoSaude = document.getElementById('historico-saude');
+        const conteudoSema = document.getElementById('conteudo-sema');
+        const historicoSema = document.getElementById('historico-sema');
+
+        // Função para preencher histórico
+        function preencherHistorico(listaElement, dados) {
+            listaElement.innerHTML = '';
+            dados.forEach(item => {
+                const li = document.createElement('li');
+                li.textContent = item;
+                listaElement.appendChild(li);
+            });
+        }
+
+        // Função para atualizar status
+        function atualizarStatusCardsPrincipais() {
+            const statusMap = {
+                "Aberto": "status-aberto",
+                "Em Andamento": "status-andamento",
+                "Encerrado": "status-encerrado"
+            };
+
+            const cardSaude = document.querySelector('.card[data-conteudo="saude"]');
+            const cardSema = document.querySelector('.card[data-conteudo="sema"]');
+            const statusSaude = document.getElementById('status-processo-saude');
+            const statusSema = document.getElementById('status-processo-sema');
+
+            if (cardSaude) {
+                const statusButton = cardSaude.querySelector('.status-button');
+                statusButton.querySelector('.emoji-status').textContent = statusProcessos.saude.emoji;
+                statusButton.querySelector('.texto-status').textContent = statusProcessos.saude.texto;
+                statusButton.className = `status-button ${statusMap[statusProcessos.saude.texto] || ''}`;
+            }
+
+            if (cardSema) {
+                const statusButton = cardSema.querySelector('.status-button');
+                statusButton.querySelector('.emoji-status').textContent = statusProcessos.sema.emoji;
+                statusButton.querySelector('.texto-status').textContent = statusProcessos.sema.texto;
+                statusButton.className = `status-button ${statusMap[statusProcessos.sema.texto] || ''}`;
+            }
+
+            if (statusSaude) {
+                statusSaude.querySelector('.emoji-status').textContent = statusProcessos.saude.emoji;
+                statusSaude.querySelector('.texto-status').textContent = statusProcessos.saude.texto;
+                statusSaude.className = `status-button ${statusMap[statusProcessos.saude.texto] || ''}`;
+            }
+
+            if (statusSema) {
+                statusSema.querySelector('.emoji-status').textContent = statusProcessos.sema.emoji;
+                statusSema.querySelector('.texto-status').textContent = statusProcessos.sema.texto;
+                statusSema.className = `status-button ${statusMap[statusProcessos.sema.texto] || ''}`;
+            }
+        }
+
+        // Botões cards
+        document.querySelectorAll('.btn-acessar').forEach(btn => {
+            btn.addEventListener('click', () => {
+                const conteudo = btn.dataset.conteudo;
+                containerCards.classList.add('hidden');
+                if (conteudo === 'saude') {
+                    conteudoSaude.classList.remove('hidden');
+                } else if (conteudo === 'sema') {
+                    conteudoSema.classList.remove('hidden');
+                }
+            });
+        });
+
+        // Saúde: Abrir histórico
+        document.getElementById('btn-historico-saude').addEventListener('click', () => {
+            preencherHistorico(document.getElementById('lista-historico-saude'), dadosHistoricoSaude);
+            conteudoSaude.classList.add('hidden');
+            historicoSaude.classList.remove('hidden');
+        });
+
+        // Saúde: Voltar do histórico para menu
+        document.getElementById('btn-voltar-historico-saude').addEventListener('click', () => {
+            historicoSaude.classList.add('hidden');
+            conteudoSaude.classList.remove('hidden');
+        });
+
+        // Saúde: Voltar para tela inicial
+        document.getElementById('btn-voltar-saude').addEventListener('click', () => {
+            conteudoSaude.classList.add('hidden');
+            containerCards.classList.remove('hidden');
+        });
+
+        // Sema: Abrir histórico
+        document.getElementById('btn-historico-sema').addEventListener('click', () => {
+            preencherHistorico(document.getElementById('lista-historico-sema'), dadosHistoricoSema);
+            conteudoSema.classList.add('hidden');
+            historicoSema.classList.remove('hidden');
+        });
+
+        // Sema: Voltar do histórico para menu
+        document.getElementById('btn-voltar-historico-sema').addEventListener('click', () => {
+            historicoSema.classList.add('hidden');
+            conteudoSema.classList.remove('hidden');
+        });
+
+        // Sema: Voltar para tela inicial
+        document.getElementById('btn-voltar-sema').addEventListener('click', () => {
+            conteudoSema.classList.add('hidden');
+            containerCards.classList.remove('hidden');
+        });
+
+        // Inicializar status
+        atualizarStatusCardsPrincipais();
+    </script>
+</body>
+
+</html>
