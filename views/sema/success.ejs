@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inscrição Realizada - Processo Seletivo Meio Ambiente</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #e6f3ff; /* Azul claro */
+      margin: 0;
+      padding: 0;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+    }
+    .container {
+      background-color: #fff;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      max-width: 600px;
+      width: 100%;
+      text-align: center;
+    }
+    h1 {
+      color: #007bff; /* Azul para o título */
+      margin-bottom: 20px;
+    }
+    p {
+      font-size: 16px;
+      color: #333;
+      margin: 10px 0;
+    }
+    .protocol {
+      font-weight: bold;
+      font-size: 18px;
+      color: #d32f2f; /* Vermelho para destacar o protocolo */
+    }
+    .button {
+      display: inline-block;
+      padding: 10px 20px;
+      background-color: #007bff; /* Azul para o botão */
+      color: #fff;
+      text-decoration: none;
+      border-radius: 5px;
+      margin: 10px;
+      transition: background-color 0.3s;
+    }
+    .button:hover {
+      background-color: #0056b3; /* Azul mais escuro no hover */
+    }
+    .footer {
+      margin-top: 30px;
+      font-size: 14px;
+      color: #666;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Inscrição Realizada com Sucesso!</h1>
+    <p>Prezado(a) <strong><%= name %></strong>,</p>
+    <p>Sua inscrição para o cargo de <strong><%= cargo %></strong> foi registrada com sucesso no Processo Seletivo Simplificado da Secretaria de Meio Ambiente.</p>
+    <p>Seu número de protocolo é: <span class="protocol"><%= protocolo %></span></p>
+    <p>Guarde este número para acompanhamento do processo seletivo.</p>
+    <a href="/download/" class="button">Baixar Comprovante</a>
+    <a href="/formulario" class="button">Voltar ao Formulário</a>
+    <div class="footer">
+      <p>Portaria Conjunta SECAD/SEMA Nº 001/2025</p>
+      <p>Secretaria de Meio Ambiente - Prefeitura de Paulista, PE</p>
+    </div>
+  </div>
+</body>
+</html>

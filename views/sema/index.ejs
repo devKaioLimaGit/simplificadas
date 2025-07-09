@@ -1,0 +1,394 @@
+<%- include('../partials/header-sema.ejs') %>
+<div class="container">
+  <form id="form-candidato" method="post" action="http://localhost:8082/send" enctype="multipart/form-data">
+    <!-- Candidate Personal Information -->
+    <div class="form-group">
+      <label for="name">Nome Completo do Candidato:</label>
+      <input type="text" id="name" name="name" placeholder="Digite seu nome completo" required
+        pattern="[A-Za-zÀ-ÿ\s]+" title="Apenas letras e espaços são permitidos" />
+    </div>
+
+    <div class="form-group">
+      <label for="cpf">CPF (Somente números):</label>
+      <input type="text" id="cpf" name="cpf" placeholder="Digite seu CPF" required
+        oninput="validarCPF(this)" maxlength="11" />
+      <span id="cpfErro" style="color: red; display: none;">CPF inválido!</span>
+    </div>
+
+    <div class="form-group">
+      <label for="birth">Data de Nascimento:</label>
+      <input type="date" id="birth" name="birth" required max="2007-06-13" />
+    </div>
+
+    <div class="form-group">
+      <label for="rg">RG ou Documento Oficial (Somente números):</label>
+      <input type="text" id="rg" name="rg" placeholder="Digite seu RG" required
+        oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,11)" />
+    </div>
+
+    <div class="form-group">
+      <label for="organ">Órgão Emissor:</label>
+      <input type="text" id="organ" name="organ" placeholder="Digite o órgão emissor" required
+        pattern="[A-Za-z0-9\/]+" title="Apenas letras, números e / são permitidos" maxlength="20" />
+    </div>
+
+    <div class="form-group">
+      <label for="uf">UF do RG:</label>
+      <select id="uf" name="uf" required>
+        <option value="" disabled selected>Selecione o estado</option>
+        <option value="AC">AC</option>
+        <option value="AL">AL</option>
+        <option value="AP">AP</option>
+        <option value="AM">AM</option>
+        <option value="BA">BA</option>
+        <option value="CE">CE</option>
+        <option value="DF">DF</option>
+        <option value="ES">ES</option>
+        <option value="GO">GO</option>
+        <option value="MA">MA</option>
+        <option value="MT">MT</option>
+        <option value="MS">MS</option>
+        <option value="MG">MG</option>
+        <option value="PA">PA</option>
+        <option value="PB">PB</option>
+        <option value="PR">PR</option>
+        <option value="PE">PE</option>
+        <option value="PI">PI</option>
+        <option value="RJ">RJ</option>
+        <option value="RN">RN</option>
+        <option value="RS">RS</option>
+        <option value="RO">RO</option>
+        <option value="RR">RR</option>
+        <option value="SC">SC</option>
+        <option value="SP">SP</option>
+        <option value="SE">SE</option>
+        <option value="TO">TO</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="title">Título de Eleitor (Somente números):</label>
+      <input type="text" id="title" name="title" placeholder="Digite o título de eleitor" required
+        oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,12)" />
+    </div>
+
+    <div class="form-group">
+      <label for="military">Quitação com Serviço Militar (Homens):</label>
+      <select id="military" name="military" required>
+        <option value="" disabled selected>Selecione</option>
+        <option value="SIM">Sim</option>
+        <option value="NÃO">Não (Feminino ou Isento)</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="nationality">Nacionalidade:</label>
+      <input type="text" id="nationality" name="nationality" placeholder="Digite sua nacionalidade" required
+        pattern="[A-Za-zÀ-ÿ\s]+" title="Apenas letras e espaços são permitidos" />
+    </div>
+
+    <div class="form-group">
+      <label for="proficiency">Certificado de Proficiência em Língua Portuguesa (Estrangeiros):</label>
+      <select id="proficiency" name="proficiency" required>
+        <option value="NÃO" selected>Não (Brasileiro)</option>
+        <option value="SIM">Sim</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="email">E-mail:</label>
+      <input type="email" id="email" name="email" placeholder="Digite seu e-mail" required />
+    </div>
+
+    <div class="form-group">
+      <label for="tel">Telefone (DDD + 9 + Número):</label>
+      <input type="text" id="tel" name="tel" placeholder="Ex.: 81912345678" required
+        oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,11)" />
+    </div>
+
+    <div class="form-group">
+      <label for="zip">CEP (Somente números):</label>
+      <input type="text" id="zip" name="zip" placeholder="Digite seu CEP" required
+        oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,8)" onblur="getAddress(this.value)" />
+    </div>
+
+    <div class="form-group">
+      <label for="address">Endereço:</label>
+      <input type="text" id="address" name="address" placeholder="Digite seu endereço" required />
+    </div>
+
+    <div class="form-group">
+      <label for="housenumber">Número:</label>
+      <input type="text" id="housenumber" name="housenumber" placeholder="Digite o número" required />
+    </div>
+
+    <div class="form-group">
+      <label for="housecomplement">Complemento:</label>
+      <input type="text" id="housecomplement" name="housecomplement" placeholder="Digite o complemento (se houver)" />
+    </div>
+
+    <div class="form-group">
+      <label for="neighborhood">Bairro:</label>
+      <input type="text" id="neighborhood" name="neighborhood" placeholder="Digite o bairro" required />
+    </div>
+
+    <div class="form-group">
+      <label for="city">Cidade:</label>
+      <input type="text" id="city" name="city" placeholder="Digite a cidade" required
+        pattern="[A-Za-zÀ-ÿ\s]+" title="Apenas letras e espaços são permitidos" />
+    </div>
+
+    <div class="form-group">
+      <label for="ufresidence">UF do Endereço:</label>
+      <select id="ufresidence" name="ufresidence" required>
+        <option value="" disabled selected>Selecione o estado</option>
+        <option value="AC">AC</option>
+        <option value="AL">AL</option>
+        <option value="AP">AP</option>
+        <option value="AM">AM</option>
+        <option value="BA">BA</option>
+        <option value="CE">CE</option>
+        <option value="DF">DF</option>
+        <option value="ES">ES</option>
+        <option value="GO">GO</option>
+        <option value="MA">MA</option>
+        <option value="MT">MT</option>
+        <option value="MS">MS</option>
+        <option value="MG">MG</option>
+        <option value="PA">PA</option>
+        <option value="PB">PB</option>
+        <option value="PR">PR</option>
+        <option value="PE">PE</option>
+        <option value="PI">PI</option>
+        <option value="RJ">RJ</option>
+        <option value="RN">RN</option>
+        <option value="RS">RS</option>
+        <option value="RO">RO</option>
+        <option value="RR">RR</option>
+        <option value="SC">SC</option>
+        <option value="SP">SP</option>
+        <option value="SE">SE</option>
+        <option value="TO">TO</option>
+      </select>
+    </div>
+
+    <!-- Position Selection -->
+    <div class="form-group">
+      <label for="position">Função Pretendida:</label>
+      <select name="position" id="position" required>
+        <option value="" disabled selected>Selecione a função</option>
+        <option value="ANALISTA_ENGENHEIRO_CIVIL">Analista - Engenheiro Civil</option>
+        <option value="ANALISTA_ENGENHEIRO_CALCULISTA">Analista - Engenheiro Calculista</option>
+        <option value="ANALISTA_ENGENHEIRO_AMBIENTAL">Analista - Engenheiro Ambiental</option>
+        <option value="ANALISTA_ENGENHEIRO_FLORESTAL">Analista - Engenheiro Florestal</option>
+        <option value="ANALISTA_ENGENHEIRO_QUIMICO_INDUSTRIAL">Analista - Engenheiro Químico/Industrial</option>
+        <option value="ANALISTA_GEOLOGO">Analista - Geólogo</option>
+        <option value="TECNICO_AMBIENTAL_EDIFICACOES">Técnico Ambiental - Técnico em Edificações</option>
+      </select>
+    </div>
+
+    <!-- Education and Professional Requirements -->
+    <div class="form-group">
+      <label for="education">Escolaridade:</label>
+      <select id="education" name="education" required>
+        <option value="" disabled selected>Selecione sua escolaridade</option>
+        <option value="CURSO_TECNICO">Curso Técnico</option>
+        <option value="SUPERIOR_COMPLETO">Superior Completo</option>
+        <option value="POS_GRADUACAO">Pós-Graduação</option>
+      </select>
+    </div>
+
+    <div class="form-group">
+      <label for="course">Curso de Formação:</label>
+      <input type="text" id="course" name="course" placeholder="Digite o nome do curso" required
+        pattern="[A-Za-zÀ-ÿ\s]+" title="Apenas letras e espaços são permitidos" />
+    </div>
+
+    <div class="form-group">
+      <label for="council">Conselho de Classe:</label>
+      <input type="text" id="council" name="council" placeholder="Ex.: CREA, CRQ" required
+        pattern="[A-Za-z]+" title="Apenas letras são permitidas" />
+    </div>
+
+    <div class="form-group">
+      <label for="councilnumber">Número de Registro no Conselho:</label>
+      <input type="text" id="councilnumber" name="councilnumber" placeholder="Digite o número do registro" required
+        oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,20)" />
+    </div>
+
+    <div class="form-group">
+      <label for="experience">Tempo de Experiência Profissional (em meses):</label>
+      <input type="number" id="experience" name="experience" placeholder="Digite o total de meses" required
+        min="12" title="Mínimo de 12 meses de experiência" />
+    </div>
+
+    <!-- Disability Information -->
+    <div class="form-group">
+      <label for="deficiency">Pessoa com Deficiência (PCD):</label>
+      <select name="deficiency" id="deficiency" required>
+        <option value="NÃO" selected>Não</option>
+        <option value="SIM">Sim</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="deficiencyDetails" style="display: none;">
+      <label for="deficiencyContext">Especifique a Deficiência (CID e Descrição):</label>
+      <textarea id="deficiencyContext" name="deficiencyContext" placeholder="Digite o CID e a descrição" rows="4"></textarea>
+    </div>
+
+    <!-- Document Upload -->
+    <div class="form-group">
+      <label for="file">Arquivo Único (PDF, Máx. 10MB):</label>
+      <input type="file" id="file" name="file" accept=".pdf" class="file-input" onchange="checkFile()" required />
+      <small id="fileError" style="color: red; display: none;"></small>
+      <small>Deve conter: Formulário de Inscrição (Anexo II), RG/CPF, Título de Eleitor, Comprovante de Quitação Eleitoral, Comprovante de Residência, Comprovante de Serviço Militar (se aplicável), Certificado de Proficiência (estrangeiros), Diploma/Declaração de Conclusão, Registro no Conselho de Classe, Comprovantes de Experiência Profissional, Cursos de Capacitação, Pós-Graduação (se houver).</small>
+    </div>
+
+    <!-- Declaration of Non-Accumulation (Anexo VIII) -->
+    <div class="form-group">
+      <label for="accumulation">Declaração de Não Acumulação de Cargos (Anexo VIII):</label>
+      <select name="accumulation" id="accumulation" required>
+        <option value="" disabled selected>Selecione</option>
+        <option value="NÃO_ACUMULO">Não acumulo cargos públicos</option>
+        <option value="ACUMULO">Acumulo cargo público</option>
+      </select>
+    </div>
+
+    <div class="form-group" id="accumulationDetails" style="display: none;">
+      <label for="accumulationInfo">Detalhes da Acumulação (se aplicável):</label>
+      <textarea id="accumulationInfo" name="accumulationInfo" placeholder="Descreva o cargo, vínculo e instituição" rows="4"></textarea>
+    </div>
+
+    <!-- Terms of Agreement -->
+    <div class="form-term">
+      <input type="checkbox" id="term" name="term" required />
+      <label for="term">Declaro que li e aceito os termos do <a href="/edital" target="_blank">Edital Portaria Conjunta SECAD/SEMA N° 001/2025</a></label>
+    </div>
+
+    <!-- CAPTCHA -->
+    <div class="form-group">
+      <label for="captcha">Responda a pergunta:</label>
+      <div id="captchaQuestion"></div>
+      <input type="text" id="captchaAnswer" name="captchaAnswer" placeholder="Digite o resultado" required />
+      <span id="captchaError" style="color: red; display: none;">Resposta incorreta!</span>
+    </div>
+
+    <!-- Submit Button -->
+    <div class="form-actions">
+      <input class="btn" type="submit" id="submitBtn" value="Enviar Inscrição" />
+    </div>
+  </form>
+</div>
+<div style="text-align: right;">
+  <img src="/images/seguro.png" width="150px" alt="Selo de Segurança">
+</div>
+<%- include('../partials/footer-sema.ejs') %>
+
+<script>
+  // CPF Validation
+  function validarCPF(input) {
+    const cpf = input.value.replace(/[^\d]/g, '');
+    const cpfErro = document.getElementById('cpfErro');
+    if (cpf.length !== 11 || !isValidCPF(cpf)) {
+      cpfErro.style.display = 'block';
+      input.setCustomValidity('CPF inválido');
+    } else {
+      cpfErro.style.display = 'none';
+      input.setCustomValidity('');
+    }
+  }
+
+  function isValidCPF(cpf) {
+    let sum = 0, rest;
+    if (cpf === "00000000000") return false;
+    for (let i = 1; i <= 9; i++) sum += parseInt(cpf.substring(i - 1, i)) * (11 - i);
+    rest = (sum * 10) % 11;
+    if (rest === 10 || rest === 11) rest = 0;
+    if (rest !== parseInt(cpf.substring(9, 10))) return false;
+    sum = 0;
+    for (let i = 1; i <= 10; i++) sum += parseInt(cpf.substring(i - 1, i)) * (12 - i);
+    rest = (sum * 10) % 11;
+    if (rest === 10 || rest === 11) rest = 0;
+    if (rest !== parseInt(cpf.substring(10, 11))) return false;
+    return true;
+  }
+
+  // File Validation (PDF only, max 10MB)
+  function checkFile() {
+    const fileInput = document.getElementById('file');
+    const fileError = document.getElementById('fileError');
+    const file = fileInput.files[0];
+    
+    fileError.style.display = 'none';
+    fileError.textContent = '';
+
+    if (file) {
+      const fileType = file.type;
+      const fileSize = file.size;
+
+      if (fileType !== 'application/pdf') {
+        fileError.textContent = 'Apenas arquivos PDF são permitidos.';
+        fileError.style.display = 'block';
+        fileInput.value = '';
+        return;
+      }
+
+      if (fileSize > 10 * 1024 * 1024) {
+        fileError.textContent = 'O arquivo deve ter no máximo 10MB.';
+        fileError.style.display = 'block';
+        fileInput.value = '';
+        return;
+      }
+    }
+  }
+
+  // Show/Hide Deficiency Details
+  document.getElementById('deficiency').addEventListener('change', function () {
+    document.getElementById('deficiencyDetails').style.display = this.value === 'SIM' ? 'block' : 'none';
+  });
+
+  // Show/Hide Accumulation Details
+  document.getElementById('accumulation').addEventListener('change', function () {
+    document.getElementById('accumulationDetails').style.display = this.value === 'ACUMULO' ? 'block' : 'none';
+  });
+
+  // Address Lookup (CEP)
+  function getAddress(cep) {
+    if (cep.length === 8) {
+      fetch(`https://viacep.com.br/ws/${cep}/json/`)
+        .then(response => response.json())
+        .then(data => {
+          if (!data.erro) {
+            document.getElementById('address').value = data.logradouro || '';
+            document.getElementById('neighborhood').value = data.bairro || '';
+            document.getElementById('city').value = data.localidade || '';
+            document.getElementById('ufresidence').value = data.uf || '';
+          }
+        })
+        .catch(error => console.error('Erro ao buscar endereço:', error));
+    }
+  }
+
+  // Birth Date Validation
+  document.getElementById('birth').addEventListener('change', function () {
+    const birthDate = new Date(this.value);
+    const minDate = new Date('2007-06-13'); // 18 years before inscription start
+    if (birthDate > minDate) {
+      this.setCustomValidity('O candidato deve ter no mínimo 18 anos na data de inscrição.');
+    } else {
+      this.setCustomValidity('');
+    }
+  });
+
+  // Form Submission Handling
+  document.getElementById('form-candidato').addEventListener('submit', function (e) {
+    const submitBtn = document.getElementById('submitBtn');
+    
+    // Disable button and show loading message
+    submitBtn.disabled = true;
+    submitBtn.value = 'Inscrição sendo enviada...';
+    
+    // Optional: Add a visual loading indicator (e.g., spinner)
+    // submitBtn.insertAdjacentHTML('afterend', '<span id="loading" style="margin-left: 10px;">⏳</span>');
+  });
+</script>
