@@ -1,0 +1,77 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id                 Int        @id @default(autoincrement())
+  protocol           String
+  filename           String
+  name               String
+  cpf                String
+  birth              String
+  rg                 String
+  organ              String
+  uf                 String
+  title              String
+  military           String
+  nationality        String
+  proficiency        String
+  email              String
+  tel                String
+  zip                String
+  address            String
+  housenumber        String
+  housecomplement    String?    // opcional
+  neighborhood       String
+  city               String
+  ufresidence        String
+  position           String
+  education          String
+  course             String
+  council            String
+  councilnumber      String
+  experience         Int
+  deficiency         String
+  deficiencyContext  String?    // opcional
+  accumulation       String
+  accumulationInfo   String?    // opcional
+  term               Boolean
+  description        String?    // opcional
+  isValid            Boolean    @default(false)
+  notice             String?    // opcional
+
+  avaliacao          Avaliacao? // relação 1:1 (User -> Avaliacao)
+}
+
+model Avaliacao {
+  id             Int     @id @default(autoincrement())
+  descricao      String
+  nota_maxima    Int     @default(100)
+  nota_inscrito  String?
+
+  userId         Int     @unique
+  usuario        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+}
+
+
+model Admin {
+  id         Int      @id @default(autoincrement())
+  name       String   @db.VarChar(191)
+  user_name  String   @db.VarChar(191)
+  password   String   @db.VarChar(191)
+  roles      String   @db.VarChar(191)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+}

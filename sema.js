@@ -1,6 +1,6 @@
-// Importes:
-const https = require("https")
-const fs = require("fs")
+// Imports
+const https = require("https");
+const fs = require("fs");
 const cors = require('cors');
 const express = require("express");
 const multer = require("multer");
@@ -11,78 +11,43 @@ const session = require('express-session');
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const dotenv = require("dotenv");
+const { PrismaClient } = require('./generated/prisma');
 
 dotenv.config();
 
 const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
+// Initialize Prisma
+const prisma = new PrismaClient();
 
-// Conexão com o banco:
-
-const connection = require("./database/bankconnection-sema");
-const User = require("./model/sema/user/User");
-
-// Sincronizar o modelo com o banco
-(async () => {
-  try {
-    await connection.sync({ force: false }); // force: false evita recriar a tabela se ela já existir
-    console.log("Tabela User sincronizada com sucesso!");
-  } catch (error) {
-    console.error("Erro ao sincronizar a tabela:", error);
-  }
-})();
-
-
-// Configuração multer:
+// Configuração multer
 const uploadConfig = require("./config/multer");
 const upload = multer(uploadConfig.upload("./tmp-sema"));
 
-
-// Middleware de Autenticação da rota ADM:
+// Middleware de Autenticação da rota ADM
 const { authenticateADM, authenticateLowuser, authenticateAdminOrLowuser } = require("./middlewares/adminAuth");
-const { where } = require("sequelize");
 
-
-// Variavel com funcionalidades do express servidor:
+// Express server setup
 const app = express();
-
-// Porta da aplicação
 const port = 8080;
 
-
-// É um mecanismo que permite que aplicações web interajam com recursos de outros domínios. 
 app.use(cors());
-
-
-// Caminhos dos arquivos do Let's Encrypt (certificados) --> ("FAZ TUA MÁGICA MAGO...")
-// const sslOptions = {
-//   key: fs.readFileSync("/etc/letsencrypt/live/simplificada.saude.paulista.pe.gov.br/privkey.pem"),
-//   cert: fs.readFileSync("/etc/letsencrypt/live/simplificada.saude.paulista.pe.gov.br/fullchain.pem"),
-//   ca: fs.readFileSync("/etc/letsencrypt/live/simplificada.saude.paulista.pe.gov.br/chain.pem")
-// };
-
-
 app.use(express.static("public"));
-
-
 
 app.use(session({
   secret: "K_*&$lpUTR@!çPÇ0524.nup",
   cookie: { maxAge: 1800000 }
 }));
 
-// Configuração ejs:
+// Configuração ejs
 app.set("view engine", "ejs");
 
-// Configuração body-parser:
+// Configuração body-parser
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
-
-
-// Middleware de autenticação para '/tmp'
+// Middleware for /tmp authentication
 app.get('/tmp/*', authenticateAdminOrLowuser, (req, res, next) => {
-  // Define o caminho real para o arquivo
   const filePath = path.join(__dirname, 'tmp', req.params[0]);
   res.sendFile(filePath, (err) => {
     if (err) {
@@ -92,11 +57,90 @@ app.get('/tmp/*', authenticateAdminOrLowuser, (req, res, next) => {
 });
 
 app.get("/", (req, res) => {
-  res.render("sema/index.ejs")
+  res.render("sema/index.ejs");
 });
 
 
-// Funções de formatação
+app.get("/controller", (req, res) => {
+  res.render("sema/admin.ejs")
+});
+
+
+
+
+app.get("/login", (req, res) => {
+  res.render("sema/login.ejs")
+})
+
+app.post("/admin/create", async(req, res) => {
+  const { name, user_name, password } = req.body;
+  const roles = "admin"
+
+  const hash = await bcryptjs.hash(password, 10);
+
+
+  const createUser = await prisma.admin.create({data:{name, user_name, password:hash, roles:roles}})
+  
+
+  res.json({menssage: "Usuário criado com sucesso!"})
+});
+
+app.post("/authenticate", async (req, res) => {
+  try {
+
+    let { username, password } = req.body;
+
+    console.log(username, password)
+
+    // Procurar o usuário pelo nome
+    const user = await prisma.admin.findFirst({ where: { user_name: username } });
+
+    if (user) {
+      // Comparar a senha fornecida com a senha criptografada no banco
+      const comparison = await bcryptjs.compare(password, user.password);
+
+
+      console.log(comparison)
+
+
+      if (comparison) {
+        // Se a senha for correta, salvar os dados do usuário na sessão
+        req.session.user = {
+          id: user.id,
+          name: user.name,
+          roles: user.roles,
+        };
+
+        // Verificar se a sessão do usuário está definida antes de acessar o nome
+        if (req.session.user) {
+          console.log("Sessão de usuário encontrada.");
+        } else {
+          console.log("Sessão de usuário não encontrada.");
+        }
+
+        // Verificar o papel do usuário e redirecionar
+        if (req.session.user.roles === 'admin') {
+          res.redirect("/controller");
+        } else if (req.session.user.roles === 'lowuser') {
+          res.redirect("/controller/lowuser");
+        } else {
+          return res.status(403).send("Função de usuário inválida");
+        }
+
+      } else {
+        // Senha incorreta
+        res.redirect("/controller");
+      }
+    } else {
+      // Usuário não encontrado
+      res.redirect("/controller");
+    }
+  } catch (error) {
+    console.error('Erro ao autenticar usuário:', error);
+    res.status(500).send("Erro interno no servidor.");
+  }
+});
+// Formatting functions
 function formatCPF(cpf) {
   return cpf.replace(/(\d{3})(\d{3})(\d{3})(\d{2})/, "$1.$2.$3-$4");
 }
@@ -131,12 +175,12 @@ function formatRG(rg) {
   return rg.replace(/(\d{2})(\d{3})(\d{3})/, "$1.$2.$3");
 }
 
-// Rota para processar o formulário
+// Form processing route
 app.post("/send", upload.single("file"), async (req, res) => {
   try {
     console.log("Arquivo recebido:", req.file);
 
-    // Gerar número de protocolo
+    // Generate protocol number
     const data = new Date();
     const fullYear = data.getFullYear();
     const day = String(data.getDate()).padStart(2, '0');
@@ -144,7 +188,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
     const digt = Math.floor(Math.random() * 900000) + 100000;
     const protocolhasg = `${fullYear}${month}${day}${digt}`;
 
-    // Extrair dados do formulário
+    // Extract form data
     const {
       name, cpf, birth, rg, organ, uf, title, military, nationality, proficiency,
       email, tel, zip, address, housenumber, housecomplement, neighborhood, city,
@@ -152,10 +196,10 @@ app.post("/send", upload.single("file"), async (req, res) => {
       deficiency, deficiencyContext, accumulation, accumulationInfo, term
     } = req.body;
 
-    // Converter term para booleano
+    // Convert term to boolean
     const formattedTerm = term === 'on' ? true : false;
 
-    // Formatando os campos
+    // Format fields
     const formattedCPF = formatCPF(cpf.replace(/\D/g, ''));
     const formattedBirth = formatDate(birth);
     const formattedPhone = formatPhone(tel);
@@ -163,7 +207,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
     const formattedTitle = formatTituloEleitor(title.replace(/\D/g, ''));
     const formattedRG = formatRG(rg.replace(/\D/g, ''));
 
-    // Validação do CPF
+    // CPF validation
     function isValidCPF(cpf) {
       let sum = 0, rest;
       if (cpf === "00000000000") return false;
@@ -186,7 +230,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
       });
     }
 
-    // Validação do arquivo
+    // File validation
     const file = req.file;
     if (!file) {
       return res.status(400).render("sema/unsuccessful.ejs", {
@@ -197,10 +241,10 @@ app.post("/send", upload.single("file"), async (req, res) => {
     const nameFile = file.filename;
     const filePath = path.join(__dirname, 'tmp-sema', nameFile);
 
-    // Verificar se o CPF já está cadastrado para a mesma vaga
-    const userExistByCPF = await User.findOne({
+    // Check if CPF already exists for the position
+    const userExistByCPF = await prisma.user.findFirst({
       where: {
-        position: position,
+        position,
         cpf: formattedCPF
       }
     });
@@ -212,55 +256,57 @@ app.post("/send", upload.single("file"), async (req, res) => {
       });
     }
 
-    // Salvar no banco de dados
-    const user = await User.create({
-      protocol: protocolhasg,
-      filename: nameFile,
-      name,
-      cpf: formattedCPF,
-      birth: formattedBirth,
-      rg: formattedRG,
-      organ,
-      uf,
-      title: formattedTitle,
-      military,
-      nationality,
-      proficiency,
-      email,
-      tel: formattedPhone,
-      zip: formattedCEP,
-      address,
-      housenumber,
-      housecomplement,
-      neighborhood,
-      city,
-      ufresidence,
-      position,
-      education,
-      course,
-      council,
-      councilnumber,
-      experience,
-      deficiency,
-      deficiencyContext: deficiency === 'SIM' ? deficiencyContext : 'NÃO TENHO',
-      accumulation,
-      accumulationInfo: accumulation === 'ACUMULO' ? accumulationInfo : 'NÃO ACUMULO',
-      term: formattedTerm,
-      description: null,
-      isValid: false,
-      notice: null
+    // Save to database
+    const user = await prisma.user.create({
+      data: {
+        protocol: protocolhasg,
+        filename: nameFile,
+        name,
+        cpf: formattedCPF,
+        birth: formattedBirth,
+        rg: formattedRG,
+        organ,
+        uf,
+        title: formattedTitle,
+        military,
+        nationality,
+        proficiency,
+        email,
+        tel: formattedPhone,
+        zip: formattedCEP,
+        address,
+        housenumber,
+        housecomplement: housecomplement || null,
+        neighborhood,
+        city,
+        ufresidence,
+        position,
+        education,
+        course,
+        council,
+        councilnumber,
+        experience: parseInt(experience),
+        deficiency,
+        deficiencyContext: deficiency === 'SIM' ? deficiencyContext : 'NÃO TENHO',
+        accumulation,
+        accumulationInfo: accumulation === 'ACUMULO' ? accumulationInfo : 'NÃO ACUMULO',
+        term: formattedTerm,
+        description: null,
+        isValid: false,
+        notice: null
+      }
     });
 
-    // Configuração do transporte de e-mail
+    // Email configuration
     const transporter = nodemailer.createTransport({
       service: "gmail",
       auth: {
         user: "dev.kaiolima@gmail.com",
-        pass: "qtfi agek iqvg vowa" // Senha de app gerada pelo Google
+        pass: "qtfi agek iqvg vowa"
       }
     });
 
-    // Conteúdo do e-mail
+    // Email content
     const htmlContent = `
       <h1>PORTARIA CONJUNTA SECAD/SEMA Nº 001/2025</h1>
       <br/>
@@ -274,7 +320,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
         </thead>
         <tbody>
           <tr><td><strong>Nº Inscrição:</strong></td><td>${protocolhasg.toUpperCase()}</td></tr>
-          <tr><td><strong>Candidato:</strong></td><td>${name.toUpperCase()}</td></tr>
+          <tr><td><strong>Candid Selection:</strong></td><td>${name.toUpperCase()}</td></tr>
           <tr><td><strong>CPF:</strong></td><td>${formattedCPF}</td></tr>
           <tr><td><strong>Data de Nascimento:</strong></td><td>${formattedBirth}</td></tr>
           <tr><td><strong>RG:</strong></td><td>${formattedRG}</td></tr>
@@ -320,10 +366,10 @@ app.post("/send", upload.single("file"), async (req, res) => {
       ]
     };
 
-    // Enviar e-mail
+    // Send email
     await transporter.sendMail(mailOptions);
 
-    // Renderizar página de sucesso
+    // Render success page
     res.render("sema/success.ejs", {
       protocolo: protocolhasg,
       name: name,
@@ -336,32 +382,20 @@ app.post("/send", upload.single("file"), async (req, res) => {
     res.status(400).render("sema/error.ejs", {
       error: "Erro ao processar a inscrição: " + err.message
     });
+  } finally {
+    await prisma.$disconnect();
   }
 });
-
-
-
 
 app.get("/search", (req, res) => {
   res.render("saude/searchIndex.ejs");
 });
 
 app.use((req, res) => {
-  res.redirect("/")
-})
+  res.redirect("/");
+});
 
-
-
-
-
-
-
-
-// Inicia o servidor HTTPS usando os certificados SSL do Let's Encrypt
-// https.createServer(sslOptions, app).listen(8080, () => {
-//   console.log(`Servidor HTTPS rodando na porta ${8080}`);
-// });
-
+// Start server
 app.listen(8082, () => {
-  console.log("servidor rodando.")
-})
+  console.log("servidor rodando.");
+});

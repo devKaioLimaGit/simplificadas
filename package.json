@@ -3,7 +3,7 @@
   "version": "1.0.0",
   "main": "index.js",
   "scripts": {
-    "simplificadas":"nodemon simplificadas.js",
+    "simplificadas": "nodemon simplificadas.js",
     "saude": "nodemon saude.js",
     "sema": "nodemon sema.js"
   },
@@ -12,6 +12,7 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
+    "@prisma/client": "^6.11.1",
     "axios": "^1.7.9",
     "bcrypt": "^5.1.1",
     "bcryptjs": "^3.0.2",
@@ -26,6 +27,7 @@
     "nodemailer": "^6.10.0",
     "nodemon": "^3.1.9",
     "pm2": "^6.0.8",
+    "prisma": "^6.11.1",
     "sequelize": "^6.37.5"
   }
 }
