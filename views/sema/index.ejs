@@ -1,5 +1,66 @@
 <%- include('../partials/header-sema.ejs') %>
+<style>
+  .file-preview-container {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  margin-top: 10px;
+  flex-wrap: wrap;
+}
 
+.file-input {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 14px;
+  background-color: #fff;
+}
+
+.visualizar-btn {
+  background-color: #0077cc; /* azul institucional */
+  color: #fff;
+  padding: 10px 18px;
+  border: none;
+  border-radius: 6px;
+  font-weight: bold;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.3s ease;
+}
+
+.visualizar-btn:hover {
+  background-color: #005fa3;
+}
+
+#filePreview {
+  margin-top: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 10px;
+  background-color: #f8f8f8;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  .input-experience {
+  width: 100%;
+  max-width: 300px;
+  padding: 10px;
+  font-size: 15px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  background-color: #f9f9f9;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.input-experience:focus {
+  outline: none;
+  border-color: #007BFF; /* azul institucional */
+  background-color: #fff;
+}
+
+}
+
+</style>
 <div class="container">
   <form id="form-candidato" method="post" action="http://localhost:8082/send" enctype="multipart/form-data">
     <!-- Candidate Personal Information -->
@@ -217,11 +278,11 @@
         oninput="this.value = this.value.replace(/[^\d]/g, '').slice(0,20)" />
     </div>
 
-    <div class="form-group">
-      <label for="experience">Tempo de Experiência Profissional (em meses):</label>
-      <input type="number" id="experience" name="experience" placeholder="Digite o total de meses" required
-        min="12" title="Mínimo de 12 meses de experiência" />
-    </div>
+  <div class="form-group">
+  <label for="experience">Tempo de Experiência Profissional (em meses):</label>
+  <input type="number" id="experience" name="experience" class="input-experience" placeholder="Digite o total de meses" required min="12" title="Mínimo de 12 meses de experiência" />
+</div>
+
 
     <!-- Disability Information -->
     <div class="form-group">
@@ -243,10 +304,11 @@
   Arquivo Único (PDF). Deve conter: Formulário de Inscrição (Anexo II), RG e CPF, Título de Eleitor, Comprovante de Quitação Eleitoral, Comprovante de Residência, Comprovante de Quitação com o Serviço Militar (se aplicável), Certificado de Proficiência em Língua Portuguesa (para estrangeiros), Diploma ou Declaração de Conclusão, Registro no Conselho de Classe, Comprovantes de Experiência Profissional, Cursos de Capacitação e Pós-Graduação (se houver).
 </label>
 
-  <div style="display: flex; gap: 10px; align-items: center;">
-    <input type="file" id="file" name="file" accept=".pdf" class="file-input" required />
-    <button type="button" onclick="visualizarArquivo()">Visualizar Arquivo</button>
-  </div>
+  <div class="file-preview-container">
+  <input type="file" id="file" name="file" accept=".pdf" class="file-input" required />
+  <button type="button" class="visualizar-btn" onclick="visualizarArquivo()">👁️ Visualizar Arquivo</button>
+</div>
+
 
   <small id="fileError" style="color: red; display: none;"></small>
 
@@ -257,12 +319,10 @@
 </div>
 
     <!-- Declaration of Non-Accumulation (Anexo VIII) -->
-      <div class="form-group">
-  <label>
-    <input type="checkbox" id="accumulation" name="accumulation" value="NÃO_ACUMULO" required />
-    Declaro que **não acumulo cargos públicos** (conforme Anexo VIII).
-  </label>
-</div>
+  <div class="form-term">
+      <input type="checkbox" id="term" name="accumulation" value="NAO_ACUMULO" required/>
+      <label for="term">Declaro que não acumulo cargos públicos (conforme Anexo VIII).</div>
+
 
     <div class="form-group" id="accumulationDetails" style="display: none;">
       <label for="accumulationInfo">Detalhes da Acumulação (se aplicável):</label>
