@@ -61,7 +61,11 @@ model User {
 
 model RegrasAvaliacao {
   id          Int         @id @default(autoincrement())
-  regras      String?
+  regras_1  String? @db.Text
+  regras_2  String? @db.Text
+  regras_3  String? @db.Text
+  regras_4  String? @db.Text
+  regras_5  String? @db.Text
   description String?
   notice      String?
 

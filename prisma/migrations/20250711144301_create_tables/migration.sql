@@ -45,7 +45,11 @@ CREATE TABLE `User` (
 -- CreateTable
 CREATE TABLE `RegrasAvaliacao` (
     `id` INTEGER NOT NULL AUTO_INCREMENT,
-    `regras` VARCHAR(191) NULL,
+    `regras_1` TEXT NULL,
+    `regras_2` TEXT NULL,
+    `regras_3` TEXT NULL,
+    `regras_4` TEXT NULL,
+    `regras_5` TEXT NULL,
     `description` VARCHAR(191) NULL,
     `notice` VARCHAR(191) NULL,
 

@@ -8,7 +8,7 @@
     <link rel="icon" href="/images/favoicon.png" type="image/x-icon" />
     <title>Admin Dashboard</title>
     <link rel="stylesheet" href="/styles.css">
-
+    <script src="/utils/script.js" defer></script>
 
 
     <!-- DataTables CSS -->
@@ -22,8 +22,6 @@
 
     <!-- DataTables JS -->
     <script src="https://cdn.datatables.net/1.12.1/js/jquery.dataTables.min.js"></script>
-
-    <script src="/utils/script.js" defer></script>
 </head>
 
 <style>
@@ -446,8 +444,7 @@
 
 <body>
     <header>
-        <h1>Lista de Candidatos
-        </h1>
+        <h1>Lista de Candidatos</h1>
         <div style="display: flex; align-items: center; gap: 20px;">
             <a href="/download" class="download" target="_blank">Download</a>
             <a href="/avaliable" class="download" target="_blank">Status Avaliador</a>
@@ -462,19 +459,16 @@
                 <thead>
                     <tr>
                         <th>ID</th>
-                        <th>N° Inscrição</th>
-                        <th>Função</th>
+                        <th>Protocolo</th>
+                        <th>Cargo</th>
                         <th>Nome</th>
-                        <th>RG</th>
+                        <th>Idade</th>
                         <th>E-Mail</th>
                         <th>CPF</th>
                         <th>Telefone</th>
                         <th>Cidade</th>
                         <th>Deficiência</th>
-                        <th>Curso</th>
                         <th>Anexo</th>
-                        <th style="visibility: hidden;">
-                            </style=>>Status</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -487,10 +481,8 @@
                                     <% } else { %>
                                 <td style="background-color: gray;">
                                     <% } %>
-
                                         <%= candidate.id %>
                                 </td>
-
                                 <td>
                                     <%= candidate.protocol %>
                                 </td>
@@ -501,7 +493,7 @@
                                     <%= candidate.name %>
                                 </td>
                                 <td>
-                                    <%= candidate.rg %>
+                                    <%= candidate.ageinyears %>
                                 </td>
                                 <td>
                                     <%= candidate.email %>
@@ -518,17 +510,9 @@
                                 <td>
                                     <%= candidate.deficiency %>
                                 </td>
-
-                                <td>
-                                    <%= candidate.course %>
-                                </td>
-
                                 <td>
                                     <button id="<%= candidate.id %>"
                                         onclick="openModal(event), setCandidateId(event)">👁️</button>
-                                </td>
-                                <td style="visibility: hidden;">
-                                    <%= candidate.isValid %>
                                 </td>
                         </tr>
                         <% }) %>
@@ -545,17 +529,20 @@
                 Fechar
             </button>
             <br>
+            <div class="tab-content" id="tab1Content"
+                style="display: flex; overflow: scroll; height: 100%; align-items: center; overflow: hidden">
+                <iframe id="select" style="width: 50%; height: 100%;" frameborder="0"></iframe>
+                <div
+                    style="width: 50%; margin: 0 auto; display:flex ; justify-content: center; align-items: center; flex-direction: column;">
+                    <div style="overflow-y: scroll; height: 300px;">
                     </div>
-                    <h2 style="text-align: center; font-family: sans-serif;">Avaliação do candidato:</h2>
-                    <form action="https://localhost:8085/isvalid" method="post"
+                    <h2 style="text-align: center; font-family: sans-serif;">Análise:</h2>
+                    <form action="https://simplificada.saude.paulista.pe.gov.br/isvalid" method="post"
                         class="form-analyze">
-                        <input type="hidden" id="candidateInput" name="candidateId" class="input-field"
+                        <input type="text" id="candidateInput" name="candidateId" class="input-field"
                             placeholder="Digite o ID do Candidato">
-                        <input type="hidden" id="notice" name="notice" class="input-field" placeholder="Nota Candidato">
-                        <input type="hidden" id="available" name="available" class="input-field"
-                            placeholder="available">
-                        <textarea id="textarea" class="textarea-field" name="description" placeholder="Comentários..."
-                            required></textarea>
+                        <textarea id="textarea" class="textarea-field" name="description"
+                            placeholder="Comentários..."></textarea>
                         <div style="display: flex; align-items: center; justify-content: space-around;">
                             <input type="submit" class="btn-aprovado" name="aprovado" value="Aprovado">
                             <input type="submit" class="btn-reprovado" name="reprovado" value="Reprovado">
@@ -594,10 +581,6 @@
             });
         });
 
-        // Objeto para armazenar os itens marcados
-        let selecoesCandidato = {};
-
-
         function openModal(event) {
             document.getElementById('pdfModal').style.display = 'flex';
             switchTab('tab1Content');
@@ -622,14 +605,10 @@
             localStorage.clear();
         }
 
-
         function sendNote() {
             const total_maximo = document.querySelector("#total_maximo");
             const inputNotice = document.querySelector("#notice")
-            const inputAvailable = document.querySelector("#available")
-            inputAvailable.value = JSON.stringify(selecoesCandidato)
-            inputNotice.value = total_maximo.innerText;
-
+            inputNotice.value = total_maximo.innerText
             alert("Nota Salva!")
 
         }
@@ -637,7 +616,37 @@
             document.getElementById('pdfModal').style.display = 'none';
             document.getElementById('pdfViewer').src = "";
         }
-        
+
+        function switchTab(tabId) {
+            document.querySelectorAll('.tab-content').forEach(function (tab) {
+                tab.classList.remove('active');
+            });
+            document.getElementById(tabId).classList.add('active');
+        }
+
+        // Lógica dos indicadores e pontuação máxima
+        const indicadores = {
+            "pos_lato_sensu": { unitaria: 5, limite: 2, maximo: 10 },
+            "residencia": { unitaria: 10, limite: 1, maximo: 10 },
+            "mestrado": { unitaria: 15, limite: 1, maximo: 15 },
+            "doutorado": { unitaria: 20, limite: 1, maximo: 20 },
+            "artigo": { unitaria: 2, limite: 3, maximo: 6 },
+            "curso_capacitacao": { unitaria: 1.5, limite: 2, maximo: 3 },
+            "exp_profissional": { unitaria: 4, limite: 4, maximo: 16 },
+            "exp_sus": { unitaria: 5, limite: 4, maximo: 20 }
+        };
+
+        function atualizarTotal() {
+            let totalMaximo = 0;
+            for (const indicador in indicadores) {
+                const checkboxesMarcados = document.querySelectorAll(`input[name="${indicador}"]:checked`).length;
+                if (checkboxesMarcados > 0) {
+                    const pontos = Math.min(checkboxesMarcados, indicadores[indicador].limite) * indicadores[indicador].unitaria;
+                    totalMaximo += pontos;
+                }
+            }
+            document.getElementById("total_maximo").innerText = totalMaximo;
+        }
 
         // Adicionar evento de mudança nos checkboxes
         document.querySelectorAll("input[type=checkbox]").forEach(checkbox => {
@@ -645,7 +654,6 @@
                 const name = this.name;
                 const maximo = indicadores[name].limite;
                 const marcados = document.querySelectorAll(`input[name="${name}"]:checked`).length;
-
                 if (marcados > maximo) {
                     this.checked = false;
                 }
@@ -655,17 +663,6 @@
 
         // Inicializar o total
         atualizarTotal();
-
-        // Exemplo de função para simular salvamento no banco
-        function salvarNoBanco(selecoes, total) {
-            const dadosParaSalvar = {
-                selecoes: selecoes,
-                pontuacaoTotal: total,
-                data: new Date().toISOString()
-            };
-            console.log("Dados para salvar no banco:", dadosParaSalvar);
-            // Aqui você implementaria a lógica real para salvar no banco de dados
-        }
     </script>
 </body>
 

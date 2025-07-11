@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Avaliação por Regras</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f2f2f2;
+            padding: 20px;
+        }
+
+        .table-container {
+            background-color: #fff;
+            padding: 30px;
+            border: 2px solid #000;
+            border-radius: 5px;
+            max-width: 1000px;
+            margin: auto;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        td,
+        th {
+            border: 1px solid #000;
+            padding: 10px;
+            text-align: left;
+            vertical-align: top;
+        }
+
+        th {
+            background-color: #f4f4f4;
+        }
+
+        input[type="text"] {
+            width: 90%;
+            padding: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="table-container">
+        <h2>Avaliação do Candidato</h2>
+        <form action="/avaliacao/salvar" method="POST">
+            <table>
+                <tr>
+                    <th>Regra</th>
+                    <th>Nota Atual</th>
+                    <th>Nova Nota</th>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%= candidate.regra.regras_1 %>
+                    </td>
+                    <td>
+                        <%= candidate.regra.notice || '-' %>
+                    </td>
+                    <td><input type="text" name="nota_1" /></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%= candidate.regra.regras_2 %>
+                    </td>
+                    <td>
+                        <%= candidate.regra.notice || '-' %>
+                    </td>
+                    <td><input type="text" name="nota_2" /></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%= candidate.regra.regras_3 %>
+                    </td>
+                    <td>
+                        <%= candidate.regra.notice || '-' %>
+                    </td>
+                    <td><input type="text" name="nota_3" /></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%= candidate.regra.regras_4 %>
+                    </td>
+                    <td>
+                        <%= candidate.regra.notice || '-' %>
+                    </td>
+                    <td><input type="text" name="nota_4" /></td>
+                </tr>
+
+                <tr>
+                    <td>
+                        <%= candidate.regra.regras_5 %>
+                    </td>
+                    <td>
+                        <%= candidate.regra.notice || '-' %>
+                    </td>
+                    <td><input type="text" name="nota_5" /></td>
+                </tr>
+            </table>
+
+            <br>
+            <button type="submit">Salvar Avaliação</button>
+        </form>
+    </div>
+</body>
+
+</html>

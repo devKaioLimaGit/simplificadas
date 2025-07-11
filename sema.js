@@ -11,14 +11,14 @@ const session = require('express-session');
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const dotenv = require("dotenv");
-// const { PrismaClient } = require('./generated/prisma');
+const { PrismaClient } = require('./generated/prisma');
 
 dotenv.config();
 
 const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 // Initialize Prisma
-// const prisma = new PrismaClient();
+const prisma = new PrismaClient();
 
 // Configuração multer
 const uploadConfig = require("./config/multer");
@@ -69,14 +69,33 @@ app.get("/select/:id", async (req, res) => {
 });
 
 
+app.get("/avaliacao/:id", async (req, res) => {
+  const id = parseInt(req.params.id);
+
+  const candidate = await prisma.user.findFirst({
+    where: { id: id },
+    include: {
+      regra: {
+        include: {
+          avaliacao: true
+        }
+      }
+    }
+  });
+
+  res.render("sema/moldetwo.ejs", {candidate});
+});
+
+
+
 
 app.get("/", (req, res) => {
   res.render("sema/index.ejs");
 });
 
-app.get("/controller", authenticateADM, async(req, res) => {
+app.get("/controller", authenticateADM, async (req, res) => {
   const candidates = await prisma.user.findMany();
-  res.render("sema/admin.ejs", {candidates:candidates})
+  res.render("sema/admin.ejs", { candidates: candidates })
 });
 
 app.get("/controller/lowuser", authenticateLowuser, (req, res) => {
@@ -97,17 +116,17 @@ app.get("/teste", (req, res) => {
 })
 
 
-app.post("/admin/create", async(req, res) => {
+app.post("/admin/create", async (req, res) => {
   const { name, user_name, password } = req.body;
   const roles = "admin"
 
   const hash = await bcryptjs.hash(password, 10);
 
 
-  const createUser = await prisma.admin.create({data:{name, user_name, password:hash, roles:roles}})
-  
+  const createUser = await prisma.admin.create({ data: { name, user_name, password: hash, roles: roles } })
 
-  res.json({menssage: "Usuário criado com sucesso!"})
+
+  res.json({ menssage: "Usuário criado com sucesso!" })
 });
 
 app.post("/authenticate", async (req, res) => {
@@ -214,21 +233,6 @@ app.post("/send", upload.single("file"), async (req, res) => {
     const protocolhasg = `${fullYear}${month}${day}${digt}`;
 
 
-    function getPositionType(position) {
-  switch (position) {
-    case "ANALISTA_ENGENHEIRO_CIVIL":
-    case "ANALISTA_ENGENHEIRO_CALCULISTA":
-    case "ANALISTA_ENGENHEIRO_AMBIENTAL":
-    case "ANALISTA_ENGENHEIRO_FLORESTAL":
-    case "ANALISTA_ENGENHEIRO_QUIMICO_INDUSTRIAL":
-    case "ANALISTA_GEOLOGO":
-      return 1; // Analista
-    case "TECNICO_AMBIENTAL_EDIFICACOES":
-      return 2; // Técnico
-    default:
-      return null; // Caso nenhuma opção válida seja selecionada
-  }
-}
 
     // Extract form data
     const {
@@ -298,7 +302,24 @@ app.post("/send", upload.single("file"), async (req, res) => {
       });
     }
 
-    console.log(getPositionType(1))
+    
+    function getPositionType(position) {
+      switch (position) {
+        case "ANALISTA_ENGENHEIRO_CIVIL":
+        case "ANALISTA_ENGENHEIRO_CALCULISTA":
+        case "ANALISTA_ENGENHEIRO_AMBIENTAL":
+        case "ANALISTA_ENGENHEIRO_FLORESTAL":
+        case "ANALISTA_ENGENHEIRO_QUIMICO_INDUSTRIAL":
+        case "ANALISTA_GEOLOGO":
+          return 1; // Analista
+        case "TECNICO_AMBIENTAL_EDIFICACOES":
+          return 2; // Técnico
+        default:
+          return null; // Caso nenhuma opção válida seja selecionada
+      }
+    }
+
+
     // Save to database
     const user = await prisma.user.create({
       data: {
@@ -337,7 +358,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
         description: null,
         isValid: false,
         notice: null,
-        regraId: getPositionType(1)
+        regraId: getPositionType(position)
       }
     });
 
