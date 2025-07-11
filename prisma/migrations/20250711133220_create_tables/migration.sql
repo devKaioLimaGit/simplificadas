@@ -34,7 +34,19 @@ CREATE TABLE `User` (
     `accumulationInfo` VARCHAR(191) NULL,
     `term` BOOLEAN NOT NULL,
     `description` VARCHAR(191) NULL,
-    `isValid` BOOLEAN NOT NULL DEFAULT false,
+    `isValid` BOOLEAN NULL,
+    `notice` VARCHAR(191) NULL,
+    `regraId` INTEGER NULL,
+
+    UNIQUE INDEX `User_regraId_key`(`regraId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `RegrasAvaliacao` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `regras` VARCHAR(191) NULL,
+    `description` VARCHAR(191) NULL,
     `notice` VARCHAR(191) NULL,
 
     PRIMARY KEY (`id`)
@@ -46,11 +58,27 @@ CREATE TABLE `Avaliacao` (
     `descricao` VARCHAR(191) NOT NULL,
     `nota_maxima` INTEGER NOT NULL DEFAULT 100,
     `nota_inscrito` VARCHAR(191) NULL,
-    `userId` INTEGER NOT NULL,
+    `regraId` INTEGER NOT NULL,
 
-    UNIQUE INDEX `Avaliacao_userId_key`(`userId`),
+    UNIQUE INDEX `Avaliacao_regraId_key`(`regraId`),
+    PRIMARY KEY (`id`)
+) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+
+-- CreateTable
+CREATE TABLE `Admin` (
+    `id` INTEGER NOT NULL AUTO_INCREMENT,
+    `name` VARCHAR(191) NOT NULL,
+    `user_name` VARCHAR(191) NOT NULL,
+    `password` VARCHAR(191) NOT NULL,
+    `roles` VARCHAR(191) NOT NULL,
+    `createdAt` DATETIME(3) NOT NULL DEFAULT CURRENT_TIMESTAMP(3),
+    `updatedAt` DATETIME(3) NOT NULL,
+
     PRIMARY KEY (`id`)
 ) DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
 
 -- AddForeignKey
-ALTER TABLE `Avaliacao` ADD CONSTRAINT `Avaliacao_userId_fkey` FOREIGN KEY (`userId`) REFERENCES `User`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;
+ALTER TABLE `User` ADD CONSTRAINT `User_regraId_fkey` FOREIGN KEY (`regraId`) REFERENCES `RegrasAvaliacao`(`id`) ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE `Avaliacao` ADD CONSTRAINT `Avaliacao_regraId_fkey` FOREIGN KEY (`regraId`) REFERENCES `RegrasAvaliacao`(`id`) ON DELETE CASCADE ON UPDATE CASCADE;

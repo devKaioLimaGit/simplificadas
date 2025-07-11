@@ -15,63 +15,76 @@ datasource db {
 }
 
 model User {
-  id                 Int        @id @default(autoincrement())
-  protocol           String
-  filename           String
-  name               String
-  cpf                String
-  birth              String
-  rg                 String
-  organ              String
-  uf                 String
-  title              String
-  military           String
-  nationality        String
-  proficiency        String
-  email              String
-  tel                String
-  zip                String
-  address            String
-  housenumber        String
-  housecomplement    String?    // opcional
-  neighborhood       String
-  city               String
-  ufresidence        String
-  position           String
-  education          String
-  course             String
-  council            String
-  councilnumber      String
-  experience         Int
-  deficiency         String
-  deficiencyContext  String?    // opcional
-  accumulation       String
-  accumulationInfo   String?    // opcional
-  term               Boolean
-  description        String?    // opcional
-  isValid            Boolean    @default(false)
-  notice             String?    // opcional
+  id                Int      @id @default(autoincrement())
+  protocol          String
+  filename          String
+  name              String
+  cpf               String
+  birth             String
+  rg                String
+  organ             String
+  uf                String
+  title             String
+  military          String
+  nationality       String
+  proficiency       String
+  email             String
+  tel               String
+  zip               String
+  address           String
+  housenumber       String
+  housecomplement   String?
+  neighborhood      String
+  city              String
+  ufresidence       String
+  position          String
+  education         String
+  course            String
+  council           String
+  councilnumber     String
+  experience        Int
+  deficiency        String
+  deficiencyContext String?
+  accumulation      String
+  accumulationInfo  String?
+  term              Boolean
+  description       String?
+  isValid           Boolean?
+  notice            String?
 
-  avaliacao          Avaliacao? // relação 1:1 (User -> Avaliacao)
+  regraId Int? @unique          // Adicionado @unique para garantir a relação 1:1
+  regra   RegrasAvaliacao?      @relation(fields: [regraId], references: [id]) // relação 1:1 com regra
+
+  // Se quiser acessar a avaliação diretamente a partir do usuário:
+  // avaliacao Avaliacao? @relation("UserAvaliacao")
+}
+
+model RegrasAvaliacao {
+  id          Int         @id @default(autoincrement())
+  regras      String?
+  description String?
+  notice      String?
+
+  usuario   User?         // relação reversa 1:1 (um usuário pode ter essa regra)
+  avaliacao Avaliacao?    // cada regra tem uma avaliação associada
 }
 
 model Avaliacao {
-  id             Int     @id @default(autoincrement())
+  id             Int              @id @default(autoincrement())
   descricao      String
-  nota_maxima    Int     @default(100)
+  nota_maxima    Int              @default(100)
   nota_inscrito  String?
 
-  userId         Int     @unique
-  usuario        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  regraId        Int              @unique
+  regra          RegrasAvaliacao @relation(fields: [regraId], references: [id], onDelete: Cascade)
 }
 
-
 model Admin {
-  id         Int      @id @default(autoincrement())
-  name       String   @db.VarChar(191)
-  user_name  String   @db.VarChar(191)
-  password   String   @db.VarChar(191)
-  roles      String   @db.VarChar(191)
-  createdAt  DateTime @default(now())
-  updatedAt  DateTime @updatedAt
+  id        Int      @id @default(autoincrement())
+  name      String   @db.VarChar(191)
+  user_name String   @db.VarChar(191)
+  password  String   @db.VarChar(191)
+  roles     String   @db.VarChar(191)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }

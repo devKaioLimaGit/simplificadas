@@ -47,8 +47,8 @@ app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // Middleware for /tmp authentication
-app.get('/tmp/*', authenticateAdminOrLowuser, (req, res, next) => {
-  const filePath = path.join(__dirname, 'tmp', req.params[0]);
+app.get('/tmp/*', (req, res, next) => {
+  const filePath = path.join(__dirname, 'tmp-sema', req.params[0]);
   res.sendFile(filePath, (err) => {
     if (err) {
       res.status(404).send('Arquivo não encontrado');
@@ -56,21 +56,41 @@ app.get('/tmp/*', authenticateAdminOrLowuser, (req, res, next) => {
   });
 });
 
+
+app.get("/select/:id", async (req, res) => {
+  const id = parseInt(req.params.id); // converte para número
+  console.log(id);
+
+  const user = await prisma.user.findFirst({
+    where: { id: id }
+  });
+
+  res.render("sema/moldeone.ejs", { user: user });
+});
+
+
+
 app.get("/", (req, res) => {
   res.render("sema/index.ejs");
 });
 
-
-app.get("/controller", (req, res) => {
-  res.render("sema/admin.ejs")
+app.get("/controller", authenticateADM, async(req, res) => {
+  const candidates = await prisma.user.findMany();
+  res.render("sema/admin.ejs", {candidates:candidates})
 });
 
+app.get("/controller/lowuser", authenticateLowuser, (req, res) => {
+  res.render("sema/lowuser.ejs")
+});
 
-
+app.get("/search", (req, res) => {
+  res.render("saude/searchIndex.ejs");
+});
 
 app.get("/login", (req, res) => {
   res.render("sema/login.ejs")
 })
+
 
 app.post("/admin/create", async(req, res) => {
   const { name, user_name, password } = req.body;
@@ -188,6 +208,23 @@ app.post("/send", upload.single("file"), async (req, res) => {
     const digt = Math.floor(Math.random() * 900000) + 100000;
     const protocolhasg = `${fullYear}${month}${day}${digt}`;
 
+
+    function getPositionType(position) {
+  switch (position) {
+    case "ANALISTA_ENGENHEIRO_CIVIL":
+    case "ANALISTA_ENGENHEIRO_CALCULISTA":
+    case "ANALISTA_ENGENHEIRO_AMBIENTAL":
+    case "ANALISTA_ENGENHEIRO_FLORESTAL":
+    case "ANALISTA_ENGENHEIRO_QUIMICO_INDUSTRIAL":
+    case "ANALISTA_GEOLOGO":
+      return 1; // Analista
+    case "TECNICO_AMBIENTAL_EDIFICACOES":
+      return 2; // Técnico
+    default:
+      return null; // Caso nenhuma opção válida seja selecionada
+  }
+}
+
     // Extract form data
     const {
       name, cpf, birth, rg, organ, uf, title, military, nationality, proficiency,
@@ -256,6 +293,7 @@ app.post("/send", upload.single("file"), async (req, res) => {
       });
     }
 
+    console.log(getPositionType(1))
     // Save to database
     const user = await prisma.user.create({
       data: {
@@ -293,7 +331,8 @@ app.post("/send", upload.single("file"), async (req, res) => {
         term: formattedTerm,
         description: null,
         isValid: false,
-        notice: null
+        notice: null,
+        regraId: getPositionType(1)
       }
     });
 
@@ -387,9 +426,6 @@ app.post("/send", upload.single("file"), async (req, res) => {
   }
 });
 
-app.get("/search", (req, res) => {
-  res.render("saude/searchIndex.ejs");
-});
 
 app.use((req, res) => {
   res.redirect("/");
