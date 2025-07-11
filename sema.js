@@ -11,14 +11,14 @@ const session = require('express-session');
 const nodemailer = require("nodemailer");
 const axios = require("axios");
 const dotenv = require("dotenv");
-const { PrismaClient } = require('./generated/prisma');
+// const { PrismaClient } = require('./generated/prisma');
 
 dotenv.config();
 
 const SECRET_KEY = process.env.RECAPTCHA_SECRET_KEY;
 
 // Initialize Prisma
-const prisma = new PrismaClient();
+// const prisma = new PrismaClient();
 
 // Configuração multer
 const uploadConfig = require("./config/multer");
@@ -89,6 +89,11 @@ app.get("/search", (req, res) => {
 
 app.get("/login", (req, res) => {
   res.render("sema/login.ejs")
+
+})
+app.get("/teste", (req, res) => {
+  res.render("sema/teste.ejs")
+
 })
 
 
